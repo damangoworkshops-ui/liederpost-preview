@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Liederpost — Bestellflow v3 (faire Preise + Upgrade-Optionen)</title>
+<title>Liederpost — Bestellflow v4 (Sparfuchs + Coupons)</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{ --ink:#1C2B4A; --paper:#FBF6EC; --yellow:#E8A33D; --coral:#D9534F; --salbei:#7A9E7E; --muted:#6b6a63; }
@@ -79,6 +79,8 @@
   .upbtn{ width:100%; background:var(--ink); color:var(--paper); border:none; border-radius:10px; padding:12px 14px; font-weight:600; font-size:13.5px; cursor:pointer; min-height:44px; text-align:center; }
   .upbtn.gold{ background:var(--yellow); color:var(--ink); }
   .upgain{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.45; }
+  .couponrow{ display:flex; gap:8px; margin-top:12px; }
+  .couponrow input{ flex:1; margin-top:0; }
   @media (max-width:400px){ .wrap{ padding:0 14px 130px; } }
 </style>
 </head>
@@ -86,7 +88,7 @@
 <div class="wrap">
   <div class="top">
     <div class="logo">Liederpost<span style="color:var(--yellow)">.</span></div>
-    <div class="draft">Prototyp v3 · Demo</div>
+    <div class="draft">Prototyp v4 · Demo</div>
   </div>
 
   <div class="stepsbar">
@@ -119,7 +121,7 @@
     <div id="pakete">
       <div class="card" data-pk="raw">
         <div class="row"><span class="t">Nur der Song <span class="badge">Einstieg</span></span><span class="p">8,90 €</span></div>
-        <div class="d">Fertiger Song als Track zum Herunterladen · volle Nutzungsfreigabe · <b>ohne</b> Extras. Kein Abo, kein Selbermachen — fertig produziert.</div>
+        <div class="d">Fertiger Song <b>(2 Varianten zur Auswahl, 1 Download inklusive)</b> · volle Nutzungsfreigabe · <b>ohne</b> Extras. Kein Abo, kein Selbermachen — fertig produziert.</div>
       </div>
       <div class="card" data-pk="e">
         <div class="row"><span class="t">Einzelsong</span><span class="p">14,90 €</span></div>
@@ -142,7 +144,7 @@
         <div class="d">Studio-Sängerin singt den Hero neu (Human-Vocal) · Manufaktur-Zertifikat · alles aus dem Erinnerungswerk</div>
       </div>
     </div>
-    <div class="note">🔒 <b>Kostprobe gratis:</b> 20-Sekunden-Teaser zum Testen — im Live-Shop jederzeit ohne Bestellung.</div>
+    <div class="note">🔒 <b>Kostprobe gratis:</b> 20-Sekunden-Teaser zum Testen — im Live-Shop jederzeit ohne Bestellung. 🎟️ Aktions-Coupons gibt's über unsere Social-Kanäle (nur „Nur der Song").</div>
     <div class="btnrow">
       <button class="btn ghost" onclick="go(1)">Zurück</button>
       <button class="btn primary" onclick="go(3)">Weiter zu den Extras</button>
@@ -159,6 +161,7 @@
       <div class="sumrow"><span>Paket <small id="sbPack"></small></span><span class="stamp" id="sbPackP">–</span></div>
       <div class="sumrow"><span>Extras <small id="sbCnt"></small></span><span class="stamp" id="sbExtras">0 €</span></div>
       <div class="sumrow disc" id="sbDiscRow" style="display:none"><span>Bundle-Rabatt (3+ Extras, −15 %)</span><span class="stamp" id="sbDisc">–</span></div>
+      <div class="sumrow disc" id="sbCoupRow" style="display:none"><span id="sbCoupLabel">Coupon (Aktion)</span><span class="stamp" id="sbCoup">–</span></div>
       <div class="sumrow total"><span>Zwischensumme</span><span class="stamp" id="sbTotal">–</span></div>
     </div>
 
@@ -173,6 +176,11 @@
     <h1>Fast fertig</h1>
     <p class="sub">Übersicht & Bestätigungen — so wie es rechtlich vorgeschrieben ist.</p>
     <div class="sumbox" id="coBox"></div>
+    <div class="couponrow">
+      <input id="couponIn" placeholder="Aktions-Coupon (z. B. SOCIAL299)">
+      <button class="btn ghost" style="width:auto; padding:12px 18px; font-size:14px" onclick="applyCoupon()">Einlösen</button>
+    </div>
+    <div id="couponMsg" class="small" style="margin-top:6px">🎟️ Social-Aktion: zeitlich limitiert · begrenzte Stückzahl — gilt nur für „Nur der Song". (Demo: SOCIAL299 · TIKTOK299 · REEL299)</div>
     <label class="fieldlabel" for="kname">Dein Name</label>
     <input id="kname" placeholder="Vor- und Nachname">
     <label class="fieldlabel" for="kmail">E-Mail (für Lieferung & Belege)</label>
@@ -201,6 +209,7 @@
     <h1>Bestellung eingegangen 💌</h1>
     <p class="sub">Bestellnummer <b id="ordNo">LP-2026-0001</b> · <span id="ordTime" class="stamp"></span></p>
     <div class="sumbox" id="ordBox"></div>
+    <div id="rawNote"></div>
     <div class="note" style="margin-top:16px">
       <b>So geht es weiter:</b><br>
       1. Wir schreiben den Liedtext aus deiner Geschichte (KI-unterstützt, geprüft).<br>
@@ -258,7 +267,7 @@
 </div>
 
 <script>
-/* ===== Daten (Preise = Doc 11 §7, brutto) ===== */
+/* ===== Daten (Preise = Doc 11 §7/§8, brutto) ===== */
 const PK = {
   raw: { name:'Nur der Song',    price:8.90,  tier:0 },
   e:   { name:'Einzelsong',      price:14.90, tier:1 },
@@ -268,9 +277,11 @@ const PK = {
   sig: { name:'Signature',       price:290.00, tier:5 }
 };
 const TORD = ['raw','e','h','b','ew','sig'];
+/* Demo-Codes für die Social-Aktion (2,99 €, nur „Nur der Song") */
+const DEMO_CODES = { 'SOCIAL299':2.99, 'TIKTOK299':2.99, 'REEL299':2.99, 'PIN299':2.99 };
 /* Was man beim Upgrade auf die jeweilige Stufe zusätzlich bekommt */
 const GAIN = {
-  e:   'Lyric-Video, PPTX/PDF-Feierpräsentation, QR-Karte, Reveal-Page & Termin-Zustellung',
+  e:   'Beide Varianten behalten + Lyric-Video, PPTX/PDF-Feierpräsentation, QR-Karte, Reveal-Page & Termin-Zustellung',
   h:   '3–5 Hook-Kandidaten + Casting, 2 B-Seiten, Mitsing-Step & Reveal-Page',
   b:   'Mitsing/Karaoke, Spoken-Word-Widmung, Klangpost-Karte, Foto/Video-Collage & Priorität ≤ 2 h',
   ew:  '3 Songs (Bundle), Reaktionsfilm, 4K-Collage, Lyric-Karte (QR/NFC) & 48-h-Service',
@@ -300,7 +311,7 @@ const EXTRAS = [
   { id:'doppel', name:'Termin-Doppel — 2 Anlässe prepaid', price:44.90, minTier:0, note:'kein Abo, einfach 2 vorausbezahlte Anlässe' }
 ];
 
-const state = { anlass:'Geburtstag', pk:'h', sel:new Set() };
+const state = { anlass:'Geburtstag', pk:'h', sel:new Set(), coupon:null };
 const eur = n => n.toFixed(2).replace('.', ',') + ' €';
 
 /* ===== Rendering ===== */
@@ -331,29 +342,48 @@ function calc(){
     if(state.sel.has(ex.id)){ extrasSum += ex.price; cnt++; lines.push(ex.name); }
   });
   const disc = cnt>=3 ? extrasSum*0.15 : 0;
-  const total = pk.price + extrasSum - disc;
-  return {pk, extrasSum, cnt, disc, total, lines};
+  const couponOn = !!(state.coupon && state.pk==='raw');
+  const base = couponOn ? state.coupon.price : pk.price;
+  const savings = couponOn ? (pk.price - base) : 0;
+  const total = base + extrasSum - disc;
+  return {pk, extrasSum, cnt, disc, total, lines, base, savings, couponOn};
 }
 function refreshSum(){
   const c = calc();
   document.getElementById('sbPack').textContent = '· '+c.pk.name;
-  document.getElementById('sbPackP').textContent = eur(c.pk.price);
+  document.getElementById('sbPackP').textContent = eur(c.base);
   document.getElementById('sbCnt').textContent = c.cnt>0 ? `· ${c.cnt} gewählt` : '· keine gewählt';
   document.getElementById('sbExtras').textContent = eur(c.extrasSum);
   document.getElementById('sbDiscRow').style.display = c.disc>0 ? 'flex':'none';
   document.getElementById('sbDisc').textContent = '− '+eur(c.disc);
+  document.getElementById('sbCoupRow').style.display = c.savings>0 ? 'flex':'none';
+  if(c.savings>0){
+    document.getElementById('sbCoupLabel').textContent = 'Coupon '+state.coupon.code+' (Aktion)';
+    document.getElementById('sbCoup').textContent = '− '+eur(c.savings);
+  }
   document.getElementById('sbTotal').textContent = eur(c.total);
   // Checkout-Box
   const co = document.getElementById('coBox');
   let html = `<div class="sumrow"><span>Anlass</span><b>${state.anlass}</b></div>
-    <div class="sumrow"><span>Paket</span><b>${c.pk.name} — ${eur(c.pk.price)}</b></div>`;
+    <div class="sumrow"><span>Paket</span><b>${c.pk.name} — ${eur(c.base)}</b></div>`;
   if(c.lines.length) html += `<div class="sumrow"><span>Extras (${c.cnt})<small><br>${c.lines.join(' · ')}</small></span><b>${eur(c.extrasSum)}</b></div>`;
   if(c.disc>0) html += `<div class="sumrow disc"><span>Bundle-Rabatt (−15 %)</span><b>− ${eur(c.disc)}</b></div>`;
+  if(c.savings>0) html += `<div class="sumrow disc"><span>Coupon ${state.coupon.code} (Social-Aktion)</span><b>− ${eur(c.savings)}</b></div>`;
   html += `<div class="sumrow total"><span>Gesamt</span><span class="stamp">${eur(c.total)}</span></div>`;
   co.innerHTML = html;
   document.getElementById('btnPreis').textContent = eur(c.total);
   window._total = eur(c.total);
   renderUpgrades();
+}
+function applyCoupon(){
+  const msg = document.getElementById('couponMsg');
+  const code = (document.getElementById('couponIn').value||'').trim().toUpperCase();
+  if(!code){ msg.textContent='Bitte einen Code eingeben.'; return; }
+  if(!(code in DEMO_CODES)){ msg.textContent='⚠️ Code unbekannt oder abgelaufen. (Demo-Codes: SOCIAL299 · TIKTOK299 · REEL299)'; return; }
+  if(state.pk!=='raw'){ msg.textContent='⚠️ Dieser Aktions-Coupon gilt nur für „Nur der Song". Wähle oben das Paket oder bestelle regulär weiter.'; return; }
+  state.coupon = { code, price: DEMO_CODES[code] };
+  msg.textContent = '✅ Code „'+code+'" aktiv — Aktionspreis '+eur(DEMO_CODES[code])+' für „Nur der Song" (zeitlich limitiert, begrenzte Stückzahl).';
+  refreshSum();
 }
 /* ===== Upgrade-Optionen kurz vor dem Abschluss ===== */
 function renderUpgrades(){
@@ -368,14 +398,16 @@ function renderUpgrades(){
   const head = state.pk==='raw'
     ? '⭐ Kurz vor dem Abschluss: Willst du doch mehr als „nur den Song“? Deine Upgrade-Optionen:'
     : '⭐ Kurz vor dem Abschluss: Deine Upgrade-Optionen — mehr Wirkung, ein Klick:';
+  const c = calc();
   let opt = '';
   targets.forEach(t=>{
-    const delta = PK[t].price - PK[state.pk].price;
+    const delta = PK[t].price - c.base;
     opt += `<div class="upopt">
       <button class="upbtn${t===targets[0]?' gold':''}" onclick="upgradeTo('${t}')">⬆️ Auf „${PK[t].name}“ upgraden — nur +${eur(delta)} mehr</button>
       <div class="upgain">Neu für dich: ${GAIN[t]}</div>
     </div>`;
   });
+  if(c.couponOn) opt += `<div class="upgain" style="margin-top:8px">ℹ️ Beim Upgrade entfällt der Aktions-Coupon (gilt nur für „Nur der Song").</div>`;
   host.innerHTML = `<div class="missedbox"><h4>${head}</h4>${opt}</div>`;
 }
 
@@ -419,6 +451,12 @@ function order(){
   document.getElementById('ordBox').innerHTML =
     `<div class="sumrow"><span>Deine Auswahl</span><b>${state.anlass} · ${PK[state.pk].name}</b></div>
      <div class="sumrow total"><span>Gesamt</span><span class="stamp">${window._total||'–'}</span></div>`;
+  const rn = document.getElementById('rawNote');
+  if(state.pk==='raw'){
+    rn.innerHTML = `<div class="missedbox"><h4>🔄 Deine 2 Varianten</h4>
+      <p>Du bekommst <b>2 Varianten zur Auswahl</b> — der Download von <b>1 Song</b> ist inklusive. Beide behalten oder mehr Varianten? Jederzeit upgraden (bis zur Produktionsfreigabe):</p>
+      <div class="upopt"><button class="upbtn gold" onclick="upgradeTo('e')">⬆️ Auf „Einzelsong" upgraden — beide Varianten + alle Features</button></div></div>`;
+  } else { rn.innerHTML=''; }
   go(5);
 }
 function wrOpen(){ document.getElementById('wrModal').classList.add('open'); wrStep(1); }
