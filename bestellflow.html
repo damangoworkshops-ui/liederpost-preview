@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Liederpost — Bestellflow v2 (Bundles + Extras)</title>
+<title>Liederpost — Bestellflow v3 (faire Preise + Upgrade-Optionen)</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{ --ink:#1C2B4A; --paper:#FBF6EC; --yellow:#E8A33D; --coral:#D9534F; --salbei:#7A9E7E; --muted:#6b6a63; }
@@ -73,6 +73,12 @@
   .small{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:10px; }
   a{ color:var(--ink); }
   .btnrow{ display:flex; gap:10px; margin-top:18px; }
+  .missedbox{ background:#FFF7E8; border:1.5px solid var(--yellow); border-radius:14px; padding:14px 16px; margin-top:16px; font-size:13.5px; line-height:1.55; }
+  .missedbox h4{ font-family:Fraunces,Georgia,serif; font-size:16px; margin-bottom:4px; }
+  .upopt{ margin-top:12px; }
+  .upbtn{ width:100%; background:var(--ink); color:var(--paper); border:none; border-radius:10px; padding:12px 14px; font-weight:600; font-size:13.5px; cursor:pointer; min-height:44px; text-align:center; }
+  .upbtn.gold{ background:var(--yellow); color:var(--ink); }
+  .upgain{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.45; }
   @media (max-width:400px){ .wrap{ padding:0 14px 130px; } }
 </style>
 </head>
@@ -80,7 +86,7 @@
 <div class="wrap">
   <div class="top">
     <div class="logo">Liederpost<span style="color:var(--yellow)">.</span></div>
-    <div class="draft">Prototyp v2 · Demo</div>
+    <div class="draft">Prototyp v3 · Demo</div>
   </div>
 
   <div class="stepsbar">
@@ -109,23 +115,27 @@
   <!-- SCHRITT 2: PAKET (inkl. Bundles) -->
   <section id="s2">
     <h1>Welches Paket?</h1>
-    <p class="sub">Vom Einzelsong bis zum Erinnerungswerk — für einen Anlass oder gleich mehrere Lieder.</p>
+    <p class="sub">Vom Einstieg bis zum Erinnerungswerk — für einen Anlass oder gleich mehrere Lieder.</p>
     <div id="pakete">
+      <div class="card" data-pk="raw">
+        <div class="row"><span class="t">Nur der Song <span class="badge">Einstieg</span></span><span class="p">8,90 €</span></div>
+        <div class="d">Fertiger Song als Track zum Herunterladen · volle Nutzungsfreigabe · <b>ohne</b> Extras. Kein Abo, kein Selbermachen — fertig produziert.</div>
+      </div>
       <div class="card" data-pk="e">
         <div class="row"><span class="t">Einzelsong</span><span class="p">14,90 €</span></div>
-        <div class="d">1 Lied (1 Version) · Lyric-Video · QR-Karte (PDF) · Termin-Zustellung</div>
+        <div class="d">1 Lied (1 Version) · <b>Lyric-Video</b> · <b>PPTX/PDF-Präsentation (Beamer)</b> · QR-Karte (PDF) · Termin-Zustellung</div>
       </div>
       <div class="card sel" data-pk="h">
         <div class="row"><span class="t">Der Stapel <span class="badge">Beliebt</span></span><span class="p">29,90 €</span></div>
-        <div class="d">3–5 Hook-Kandidaten → Casting zum Hero + 2 B-Seiten · Reveal-Page · Lyric-Video · QR-Karte · Mitsing-Step</div>
+        <div class="d">3–5 Hook-Kandidaten → Casting zum Hero + 2 B-Seiten · Reveal-Page · Lyric-Video · QR-Karte · PPTX/PDF-Präsentation · Mitsing-Step</div>
       </div>
       <div class="card" data-pk="b">
         <div class="row"><span class="t">Bühne</span><span class="p">39,90 €</span></div>
-        <div class="d">Der Stapel + Mitsing/Karaoke + Spoken-Word-Widmung + gedruckte Klangpost-Karte + Priorität ≤ 2 h</div>
+        <div class="d">Der Stapel + Mitsing/Karaoke + Spoken-Word-Widmung + gedruckte Klangpost-Karte + <b>Foto/Video-Collage</b> + Priorität ≤ 2 h</div>
       </div>
       <div class="card" data-pk="ew">
         <div class="row"><span class="t">Erinnerungswerk <span class="badge bundle">Bundle · 3 Songs</span></span><span class="p">149 €</span></div>
-        <div class="d">3 Songs (Hero + 2 weitere Anlässe) · Human-Final-Mix · Reaktionsfilm-Slot · Foto/Video-Collage · Lyric-Karte (QR/NFC) · 48-h-Service</div>
+        <div class="d">3 Songs (Hero + 2 weitere Anlässe) · Human-Final-Mix · Reaktionsfilm · Collage in 4K · Lyric-Karte (QR/NFC) · 48-h-Service</div>
       </div>
       <div class="card" data-pk="sig">
         <div class="row"><span class="t">Signature <span class="badge wait">Waitlist Q2</span></span><span class="p">290 €</span></div>
@@ -177,6 +187,9 @@
     <label class="check"><input type="checkbox" class="req" id="c4"><span><b>AGB & Revisionen:</b> AGB anerkannt — inkl. bis zu 2 Nachbesserungsrunden vor der Finalisierung; danach ist die Produktion für personalisierte Produkte abgeschlossen. <a href="#" onclick="return false">AGB</a></span></label>
 
     <div class="ainote" style="text-align:left; margin-top:14px">🤖 Transparenz: Alle Lieder & Medien werden <b>KI-unterstützt</b> erstellt und nach EU-KI-Verordnung gekennzeichnet. Text, Anlass und Widmung kommen von <em>deiner</em> Geschichte.</div>
+
+    <!-- UPGRADE-OPTIONEN: kurz vor dem Abschluss -->
+    <div id="upgradeBox"></div>
 
     <div class="btnrow"><button class="btn gold" id="orderBtn" disabled onclick="order()">Jetzt bestellen — <span id="btnPreis">–</span></button></div>
     <p class="small">Demo-Klick — es wird nichts berechnet. Zahlung später über Stripe/PayPal.</p>
@@ -245,35 +258,45 @@
 </div>
 
 <script>
-/* ===== Daten (Preise = Doc 11 Produktkatalog, brutto) ===== */
+/* ===== Daten (Preise = Doc 11 §7, brutto) ===== */
 const PK = {
+  raw: { name:'Nur der Song',    price:8.90,  tier:0 },
   e:   { name:'Einzelsong',      price:14.90, tier:1 },
   h:   { name:'Der Stapel',      price:29.90, tier:2 },
   b:   { name:'Bühne',           price:39.90, tier:3 },
   ew:  { name:'Erinnerungswerk', price:149.00, tier:4 },
   sig: { name:'Signature',       price:290.00, tier:5 }
 };
+const TORD = ['raw','e','h','b','ew','sig'];
+/* Was man beim Upgrade auf die jeweilige Stufe zusätzlich bekommt */
+const GAIN = {
+  e:   'Lyric-Video, PPTX/PDF-Feierpräsentation, QR-Karte, Reveal-Page & Termin-Zustellung',
+  h:   '3–5 Hook-Kandidaten + Casting, 2 B-Seiten, Mitsing-Step & Reveal-Page',
+  b:   'Mitsing/Karaoke, Spoken-Word-Widmung, Klangpost-Karte, Foto/Video-Collage & Priorität ≤ 2 h',
+  ew:  '3 Songs (Bundle), Reaktionsfilm, 4K-Collage, Lyric-Karte (QR/NFC) & 48-h-Service',
+  sig: 'Human-Vocal (Studio-Sängerin singt den Hero neu) & Manufaktur-Zertifikat'
+};
 /* minTier = ab welchem Paket das Extra schon ENTHALTEN ist (0 = nie enthalten) */
 const EXTRAS = [
   { g:'🎬 Video & Medien' },
-  { id:'collage', name:'Foto/Video-Collage (1080p)', price:19.90, minTier:4, note:'Fotos → Film zum Lied · 2K +9,90 € · 4K +19,90 €' },
-  { id:'lyricvid', name:'Lyric-Video', price:0, minTier:1, note:'singender Text zum Mitlesen — in allen Paketen inklusive' },
-  { id:'film', name:'Reaktionsfilm (professionell geschnitten)', price:19.90, minTier:4, note:'aus dem Empfänger-Upload' },
-  { id:'pptx', name:'PPTX/PDF-Slideshow (Beamer-Show)', price:12.90, minTier:0, note:'fertige Präsentation für die Feier — einfach am Beamer abspielen' },
+  { id:'collage', name:'Foto/Video-Collage (1080p)', price:19.90, minTier:3, note:'ab Bühne inklusive · aus deinen Fotos · 2K +9,90 € · 4K +19,90 €' },
+  { id:'lyricvid', name:'Lyric-Video', price:0, minTier:1, note:'ab Einzelsong inklusive · singender Text zum Mitlesen' },
+  { id:'film', name:'Reaktionsfilm (professionell geschnitten)', price:19.90, minTier:4, note:'ab Erinnerungswerk inklusive · aus dem Empfänger-Upload' },
+  { id:'pptx', name:'PPTX/PDF-Slideshow (Beamer-Show)', price:12.90, minTier:1, note:'ab Einzelsong inklusive · für die Feier am Beamer' },
   { g:'🎤 Musik & Stimme' },
-  { id:'karaoke', name:'Mitsing-/Karaoke-Paket', price:6.90, minTier:3, note:'Stems + singender Text' },
-  { id:'spoken', name:'Spoken-Word-Widmung', price:2.90, minTier:3, note:'deine echte Stimme vor dem Lied' },
+  { id:'karaoke', name:'Mitsing-/Karaoke-Paket', price:6.90, minTier:3, note:'ab Bühne inklusive · Stems + singender Text' },
+  { id:'spoken', name:'Spoken-Word-Widmung', price:2.90, minTier:3, note:'ab Bühne inklusive · deine echte Stimme vor dem Lied' },
   { id:'bi', name:'Zweisprachige Fassung (DE+EN/TR/PL)', price:9.90, minTier:0, note:'' },
   { id:'dialekt', name:'Dialekt-Fassung (Bairisch/Schwäbisch/Kölsch/Wienerisch)', price:6.90, minTier:0, note:'QA-geprüft' },
   { id:'notes', name:'Lead-Sheet/Noten-PDF', price:4.90, minTier:0, note:'Manufaktur-Optik zum Ausdrucken' },
   { g:'💌 Print & Versand' },
   { id:'lyricpdf', name:'Lyric-Poster (PDF)', price:4.90, minTier:0, note:'' },
   { id:'lyricprint', name:'Lyric-Poster gedruckt', price:12.90, minTier:0, note:'' },
-  { id:'klangpost', name:'Klangpost-Karte (QR + Widmung, gedruckt)', price:6.90, minTier:3, note:'' },
+  { id:'klangpost', name:'Klangpost-Karte (QR + Widmung, gedruckt)', price:6.90, minTier:3, note:'ab Bühne inklusive' },
   { id:'cd', name:'CD (inkl. Versand)', price:14.90, minTier:0, note:'' },
   { id:'usb', name:'USB-Stick (Kassetten-Look)', price:24.90, minTier:0, note:'' },
   { g:'🎁 Erlebnis' },
-  { id:'termin', name:'Termin-Zustellung (Tag & Stunde)', price:2.90, minTier:0, note:'' },
+  { id:'termin', name:'Termin-Zustellung (Tag & Stunde)', price:2.90, minTier:1, note:'ab Einzelsong inklusive' },
   { id:'doppel', name:'Termin-Doppel — 2 Anlässe prepaid', price:44.90, minTier:0, note:'kein Abo, einfach 2 vorausbezahlte Anlässe' }
 ];
 
@@ -330,6 +353,30 @@ function refreshSum(){
   co.innerHTML = html;
   document.getElementById('btnPreis').textContent = eur(c.total);
   window._total = eur(c.total);
+  renderUpgrades();
+}
+/* ===== Upgrade-Optionen kurz vor dem Abschluss ===== */
+function renderUpgrades(){
+  const host = document.getElementById('upgradeBox');
+  const idx = TORD.indexOf(state.pk);
+  const targets = TORD.slice(idx+1, idx+3); // nächste 1–2 Stufen
+  if(!targets.length){
+    host.innerHTML = `<div class="missedbox"><h4>⭐ Upgrade-Optionen</h4>
+      <p>Du hast die höchste Stufe — hier ist alles enthalten. Weitere Extras findest du einen Schritt vorher.</p></div>`;
+    return;
+  }
+  const head = state.pk==='raw'
+    ? '⭐ Kurz vor dem Abschluss: Willst du doch mehr als „nur den Song“? Deine Upgrade-Optionen:'
+    : '⭐ Kurz vor dem Abschluss: Deine Upgrade-Optionen — mehr Wirkung, ein Klick:';
+  let opt = '';
+  targets.forEach(t=>{
+    const delta = PK[t].price - PK[state.pk].price;
+    opt += `<div class="upopt">
+      <button class="upbtn${t===targets[0]?' gold':''}" onclick="upgradeTo('${t}')">⬆️ Auf „${PK[t].name}“ upgraden — nur +${eur(delta)} mehr</button>
+      <div class="upgain">Neu für dich: ${GAIN[t]}</div>
+    </div>`;
+  });
+  host.innerHTML = `<div class="missedbox"><h4>${head}</h4>${opt}</div>`;
 }
 
 /* ===== Navigation ===== */
@@ -351,6 +398,12 @@ document.querySelectorAll('#pakete .card').forEach(c=>c.addEventListener('click'
   if(document.getElementById('s3').classList.contains('active')){ renderExtras(); }
   refreshSum();
 }));
+function upgradeTo(pk){
+  state.pk = pk;
+  document.querySelectorAll('#pakete .card').forEach(x=>x.classList.toggle('sel', x.dataset.pk===pk));
+  if(document.getElementById('s3').classList.contains('active')){ renderExtras(); }
+  refreshSum();
+}
 document.querySelectorAll('.req').forEach(c=>c.addEventListener('change',()=>{
   const all=[...document.querySelectorAll('.req')].every(x=>x.checked);
   document.getElementById('orderBtn').disabled=!all;
