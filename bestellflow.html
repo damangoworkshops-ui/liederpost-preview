@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Liederpost — Bestellflow (App-Prototyp v1)</title>
+<title>Liederpost — Bestellflow v2 (Bundles + Extras)</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{ --ink:#1C2B4A; --paper:#FBF6EC; --yellow:#E8A33D; --coral:#D9534F; --salbei:#7A9E7E; --muted:#6b6a63; }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ font-family:Inter,system-ui,sans-serif; background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased; }
-  .wrap{ max-width:520px; margin:0 auto; padding:0 18px 120px; }
+  .wrap{ max-width:520px; margin:0 auto; padding:0 18px 130px; }
   .top{ display:flex; align-items:center; justify-content:space-between; padding:14px 0 8px; position:sticky; top:0; background:var(--paper); z-index:5; }
   .logo{ font-family:Fraunces,Georgia,serif; font-size:19px; font-weight:600; }
   .draft{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#b3a58a; }
@@ -26,8 +26,7 @@
   .chip{ border:1.5px solid rgba(28,43,74,.18); background:#fff; border-radius:999px; padding:10px 14px; font-size:14px; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; gap:7px; }
   .chip.sel{ border-color:var(--ink); background:var(--ink); color:var(--paper); }
   textarea, input{ width:100%; border:1.5px solid rgba(28,43,74,.18); border-radius:12px; padding:13px 14px; font:inherit; font-size:15px; background:#fff; color:var(--ink); margin-top:8px; }
-  textarea{ min-height:120px; resize:vertical; }
-  .voicebtn{ margin-top:10px; }
+  textarea{ min-height:110px; resize:vertical; }
   .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:12px; padding:15px 20px; font-weight:600; font-size:15.5px; cursor:pointer; border:none; min-height:48px; width:100%; }
   .btn.primary{ background:var(--ink); color:var(--paper); }
   .btn.gold{ background:var(--yellow); color:var(--ink); }
@@ -37,17 +36,30 @@
   .card.sel{ border-color:var(--yellow); box-shadow:0 6px 20px rgba(232,163,61,.18); }
   .card .row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
   .card .t{ font-weight:600; font-size:15.5px; }
-  .card .p{ font-family:Fraunces,Georgia,serif; font-size:19px; }
+  .card .p{ font-family:Fraunces,Georgia,serif; font-size:19px; white-space:nowrap; }
   .card .d{ color:var(--muted); font-size:13.5px; margin-top:5px; line-height:1.5; }
   .badge{ font-size:11px; background:var(--yellow); border-radius:999px; padding:3px 9px; font-weight:600; }
+  .badge.bundle{ background:var(--salbei); color:#fff; }
+  .badge.wait{ background:rgba(28,43,74,.12); color:var(--ink); }
+  h3{ font-family:Fraunces,Georgia,serif; font-size:18px; margin:24px 0 2px; }
   .check{ display:flex; gap:11px; align-items:flex-start; background:#fff; border:1.5px solid rgba(28,43,74,.12); border-radius:12px; padding:13px 14px; margin-top:10px; font-size:13.5px; line-height:1.55; color:var(--ink); }
   .check input{ width:20px; height:20px; min-width:20px; margin:1px 0 0; accent-color:var(--ink); }
+  .extra{ display:flex; gap:11px; align-items:flex-start; background:#fff; border:1.5px solid rgba(28,43,74,.12); border-radius:12px; padding:12px 14px; margin-top:10px; font-size:14px; cursor:pointer; }
+  .extra.sel{ border-color:var(--yellow); background:#fffdf8; }
+  .extra.incl{ opacity:.75; background:rgba(122,158,126,.08); cursor:default; }
+  .extra input{ width:20px; height:20px; min-width:20px; margin:2px 0 0; accent-color:var(--ink); }
+  .extra .en{ font-weight:600; }
+  .extra .ed{ color:var(--muted); font-size:12.5px; margin-top:2px; line-height:1.45; }
+  .extra .ep{ margin-left:auto; font-family:Fraunces,Georgia,serif; font-size:16px; white-space:nowrap; }
   .note{ background:rgba(122,158,126,.14); border-left:3px solid var(--salbei); border-radius:8px; padding:11px 13px; font-size:13px; line-height:1.55; color:#41563f; margin-top:12px; }
   .ainote{ text-align:center; font-size:12px; color:var(--muted); margin-top:16px; line-height:1.6; }
-  .sumrow{ display:flex; justify-content:space-between; font-size:14.5px; padding:9px 0; border-bottom:1px dashed rgba(28,43,74,.15); }
-  .sumrow.total{ border-bottom:none; font-weight:700; font-size:16px; padding-top:12px; }
+  .sumbox{ background:#fff; border:1.5px solid rgba(28,43,74,.12); border-radius:14px; padding:14px 16px; margin-top:18px; }
+  .sumrow{ display:flex; justify-content:space-between; gap:10px; font-size:14px; padding:7px 0; border-bottom:1px dashed rgba(28,43,74,.15); }
+  .sumrow:last-child{ border-bottom:none; }
+  .sumrow.total{ font-weight:700; font-size:16px; padding-top:10px; }
+  .sumrow.disc{ color:#2e6b33; }
+  .sumrow small{ color:var(--muted); font-weight:400; }
   .fieldlabel{ font-size:13px; font-weight:600; margin-top:14px; display:block; }
-  h3{ font-family:Fraunces,Georgia,serif; font-size:19px; margin:22px 0 2px; }
   .footerbar{ position:fixed; left:0; right:0; bottom:0; background:rgba(251,246,236,.96); backdrop-filter:blur(6px); border-top:1px solid rgba(28,43,74,.1); padding:10px 18px calc(10px + env(safe-area-inset-bottom)); z-index:50; }
   .footerbar .inner{ max-width:520px; margin:0 auto; display:flex; gap:10px; align-items:center; justify-content:space-between; }
   .wrbtn{ font-size:13.5px; font-weight:600; color:var(--ink); background:#fff; border:1.5px solid rgba(28,43,74,.35); border-radius:10px; padding:10px 14px; cursor:pointer; min-height:44px; }
@@ -56,118 +68,142 @@
   .modal.open{ display:flex; }
   .sheet{ background:var(--paper); width:100%; max-width:520px; border-radius:20px 20px 0 0; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto; }
   .sheet h2{ font-family:Fraunces,Georgia,serif; font-size:21px; margin-bottom:8px; }
-  .sheet .sub{ font-size:13.5px; }
   .confirmbox{ background:#fff; border:1.5px solid var(--salbei); border-radius:12px; padding:14px; margin-top:14px; font-size:13.5px; line-height:1.6; }
   .stamp{ font-family:Fraunces,Georgia,serif; }
   .small{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:10px; }
   a{ color:var(--ink); }
-  @media (max-width:400px){ .wrap{ padding:0 14px 120px; } }
+  .btnrow{ display:flex; gap:10px; margin-top:18px; }
+  @media (max-width:400px){ .wrap{ padding:0 14px 130px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="logo">Liederpost<span style="color:var(--yellow)">.</span></div>
-    <div class="draft">Prototyp v1 · Demo</div>
+    <div class="draft">Prototyp v2 · Demo</div>
   </div>
 
   <div class="stepsbar">
-    <div class="stepdot on" id="d1"></div><div class="stepdot" id="d2"></div><div class="stepdot" id="d3"></div>
+    <div class="stepdot on" id="d1"></div><div class="stepdot" id="d2"></div><div class="stepdot" id="d3"></div><div class="stepdot" id="d4"></div>
   </div>
 
   <!-- SCHRITT 1: ERZÄHLEN -->
   <section id="s1" class="active">
     <h1>Worum soll es gehen?</h1>
-    <p class="sub">Wähle den Anlass — daraus bauen wir dein Lied.</p>
+    <p class="sub">Wähle den Anlass — daraus bauen wir dein Lied (oder gleich mehrere).</p>
     <div class="chiprow" id="anlaesse">
       <button class="chip sel" data-a="Geburtstag">🎂 Geburtstag</button>
       <button class="chip" data-a="Hochzeit">💍 Hochzeit</button>
       <button class="chip" data-a="Jubiläum">🥂 Jubiläum</button>
       <button class="chip" data-a="Andenken">🕊️ Andenken</button>
       <button class="chip" data-a="Jahrgang">🎓 Jahrgang</button>
-      <button class="chip" data-a="Firmen">💼 Firma</button>
+      <button class="chip" data-a="Firma">💼 Firma</button>
     </div>
     <label class="fieldlabel" for="story">Erzähle die Geschichte</label>
     <textarea id="story" placeholder="Wer wird beschenkt? Was ist besonders? Ein paar Stichpunkte reichen — kein Songtext nötig."></textarea>
-    <button class="btn ghost voicebtn" onclick="voiceDemo(this)">🎙️ Sprachnotiz aufnehmen (Demo)</button>
+    <button class="btn ghost" style="margin-top:10px" onclick="voiceDemo(this)">🎙️ Sprachnotiz aufnehmen (Demo)</button>
     <p class="small">In der finalen App kannst du hier direkt sprechen — unsere KI schreibt daraus den Liedtext. <em>(Art.-9-Hinweis: Stimme = besondere Kategorie, separate Einwilligung folgt im Checkout.)</em></p>
-    <div style="margin-top:18px"><button class="btn primary" onclick="go(2)">Weiter zur Paketwahl</button></div>
+    <div class="btnrow"><button class="btn primary" onclick="go(2)">Weiter zur Paketwahl</button></div>
   </section>
 
-  <!-- SCHRITT 2: PAKET -->
+  <!-- SCHRITT 2: PAKET (inkl. Bundles) -->
   <section id="s2">
     <h1>Welches Paket?</h1>
-    <p class="sub">Jederzeit nachbesserbar — bis du zufrieden bist, wird geliefert.</p>
+    <p class="sub">Vom Einzelsong bis zum Erinnerungswerk — für einen Anlass oder gleich mehrere Lieder.</p>
     <div id="pakete">
-      <div class="card" data-p="Einzelsong" data-price="14,90">
+      <div class="card" data-pk="e">
         <div class="row"><span class="t">Einzelsong</span><span class="p">14,90 €</span></div>
-        <div class="d">1 Lied, 1 Revision · als Download</div>
+        <div class="d">1 Lied (1 Version) · Lyric-Video · QR-Karte (PDF) · Termin-Zustellung</div>
       </div>
-      <div class="card sel" data-p="Klassik" data-price="29,90">
-        <div class="row"><span class="t">Das Geschenk <span class="badge">Beliebt</span></span><span class="p">29,90 €</span></div>
-        <div class="d">1 Lied, 2 Revisionen · Reveal-Seite + Download · persönliche Widmung</div>
+      <div class="card sel" data-pk="h">
+        <div class="row"><span class="t">Der Stapel <span class="badge">Beliebt</span></span><span class="p">29,90 €</span></div>
+        <div class="d">3–5 Hook-Kandidaten → Casting zum Hero + 2 B-Seiten · Reveal-Page · Lyric-Video · QR-Karte · Mitsing-Step</div>
       </div>
-      <div class="card" data-p="Bühne" data-price="39,90">
+      <div class="card" data-pk="b">
         <div class="row"><span class="t">Bühne</span><span class="p">39,90 €</span></div>
-        <div class="d">+ Karaoke-/Lyric-Video · QR-Karte zum Verschenken</div>
+        <div class="d">Der Stapel + Mitsing/Karaoke + Spoken-Word-Widmung + gedruckte Klangpost-Karte + Priorität ≤ 2 h</div>
+      </div>
+      <div class="card" data-pk="ew">
+        <div class="row"><span class="t">Erinnerungswerk <span class="badge bundle">Bundle · 3 Songs</span></span><span class="p">149 €</span></div>
+        <div class="d">3 Songs (Hero + 2 weitere Anlässe) · Human-Final-Mix · Reaktionsfilm-Slot · Foto/Video-Collage · Lyric-Karte (QR/NFC) · 48-h-Service</div>
+      </div>
+      <div class="card" data-pk="sig">
+        <div class="row"><span class="t">Signature <span class="badge wait">Waitlist Q2</span></span><span class="p">290 €</span></div>
+        <div class="d">Studio-Sängerin singt den Hero neu (Human-Vocal) · Manufaktur-Zertifikat · alles aus dem Erinnerungswerk</div>
       </div>
     </div>
-    <div class="note">💡 Premium & Signature (149 € / 290 €) folgen im nächsten Ausbau (Mehrere Lieder, Album, hochwertige Prints).</div>
-    <div style="margin-top:18px; display:flex; gap:10px">
+    <div class="note">🔒 <b>Kostprobe gratis:</b> 20-Sekunden-Teaser zum Testen — im Live-Shop jederzeit ohne Bestellung.</div>
+    <div class="btnrow">
       <button class="btn ghost" onclick="go(1)">Zurück</button>
-      <button class="btn primary" onclick="go(3)">Weiter zum Checkout</button>
+      <button class="btn primary" onclick="go(3)">Weiter zu den Extras</button>
     </div>
   </section>
 
-  <!-- SCHRITT 3: CHECKOUT -->
+  <!-- SCHRITT 3: EXTRAS -->
   <section id="s3">
+    <h1>Mach mehr draus ✨</h1>
+    <p class="sub">Alles einzeln dazubuchbar — <b>ab 3 Extras gibt es −15 %</b> (Bundle-Vorteil).</p>
+    <div id="extras"></div>
+
+    <div class="sumbox">
+      <div class="sumrow"><span>Paket <small id="sbPack"></small></span><span class="stamp" id="sbPackP">–</span></div>
+      <div class="sumrow"><span>Extras <small id="sbCnt"></small></span><span class="stamp" id="sbExtras">0 €</span></div>
+      <div class="sumrow disc" id="sbDiscRow" style="display:none"><span>Bundle-Rabatt (3+ Extras, −15 %)</span><span class="stamp" id="sbDisc">–</span></div>
+      <div class="sumrow total"><span>Zwischensumme</span><span class="stamp" id="sbTotal">–</span></div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn ghost" onclick="go(2)">Zurück</button>
+      <button class="btn primary" onclick="go(4)">Weiter zum Checkout</button>
+    </div>
+  </section>
+
+  <!-- SCHRITT 4: CHECKOUT -->
+  <section id="s4">
     <h1>Fast fertig</h1>
     <p class="sub">Übersicht & Bestätigungen — so wie es rechtlich vorgeschrieben ist.</p>
-    <div style="margin-top:16px">
-      <div class="sumrow"><span>Anlass</span><b id="sumAnlass">Geburtstag</b></div>
-      <div class="sumrow"><span>Paket</span><b id="sumPaket">Das Geschenk</b></div>
-      <div class="sumrow total"><span>Gesamt</span><span class="stamp" id="sumPreis">29,90 €</span></div>
-    </div>
+    <div class="sumbox" id="coBox"></div>
     <label class="fieldlabel" for="kname">Dein Name</label>
     <input id="kname" placeholder="Vor- und Nachname">
     <label class="fieldlabel" for="kmail">E-Mail (für Lieferung & Belege)</label>
     <input id="kmail" type="email" placeholder="du@beispiel.de">
     <label class="fieldlabel" for="kb">Für wen ist das Lied?</label>
-    <input id="kb" placeholder="z. B. „Anna zum 60."">
+    <input id="kb" placeholder="z. B. „Anna zum 60.">
 
     <h3>Bevor es losgeht</h3>
     <label class="check"><input type="checkbox" class="req" id="c1"><span><b>Start der Produktion:</b> Ich stimme zu, dass die Produktion sofort beginnt. Mir ist bekannt, dass ich dadurch mein Widerrufsrecht verliere (§ 356 Abs. 5 BGB). <a href="#" onclick="return false">Details</a></span></label>
-    <label class="check"><input type="checkbox" class="req" id="c2"><span><b>Rechte an den Inhalten:</b> Ich bestätige, dass ich nur eigene Sprachnotizen/Texte hochlade bzw. die Rechte aller Mitwirkenden besitze, und stelle Liederpost von Ansprüchen Dritter frei.</span></label>
-    <label class="check"><input type="checkbox" class="req" id="c3"><span><b>Einwilligung (Art. 9 DSGVO):</b> Ich willige in die Verarbeitung besonderer Daten ein (Stimme, Texte über Dritte; bei Kinderfotos: elterliche Zustimmung liegt vor). <a href="#" onclick="return false">Datenschutz</a></span></label>
+    <label class="check"><input type="checkbox" class="req" id="c2"><span><b>Rechte an den Inhalten:</b> Ich bestätige, dass ich nur eigene Sprachnotizen/Texte/Fotos hochlade bzw. die Rechte aller Mitwirkenden besitze, und stelle Liederpost von Ansprüchen Dritter frei.</span></label>
+    <label class="check"><input type="checkbox" class="req" id="c3"><span><b>Einwilligung (Art. 9 DSGVO):</b> Ich willige in die Verarbeitung besonderer Daten ein (Stimme, Texte/Fotos über Dritte; bei Kinderfotos: elterliche Zustimmung liegt vor). <a href="#" onclick="return false">Datenschutz</a></span></label>
     <label class="check"><input type="checkbox" class="req" id="c4"><span><b>AGB & Revisionen:</b> AGB anerkannt — inkl. bis zu 2 Nachbesserungsrunden vor der Finalisierung; danach ist die Produktion für personalisierte Produkte abgeschlossen. <a href="#" onclick="return false">AGB</a></span></label>
 
-    <div class="ainote" style="text-align:left; margin-top:14px">🤖 Transparenz: Alle Lieder werden <b>KI-unterstützt</b> erstellt und nach EU-KI-Verordnung gekennzeichnet. Keine Sorge: Text, Anlass und Widmung kommen von <em>deiner</em> Geschichte.</div>
+    <div class="ainote" style="text-align:left; margin-top:14px">🤖 Transparenz: Alle Lieder & Medien werden <b>KI-unterstützt</b> erstellt und nach EU-KI-Verordnung gekennzeichnet. Text, Anlass und Widmung kommen von <em>deiner</em> Geschichte.</div>
 
-    <div style="margin-top:16px"><button class="btn gold" id="orderBtn" disabled onclick="order()">Jetzt bestellen — <span id="btnPreis">29,90 €</span></button></div>
+    <div class="btnrow"><button class="btn gold" id="orderBtn" disabled onclick="order()">Jetzt bestellen — <span id="btnPreis">–</span></button></div>
     <p class="small">Demo-Klick — es wird nichts berechnet. Zahlung später über Stripe/PayPal.</p>
-    <div style="margin-top:10px"><button class="btn ghost" onclick="go(2)">Zurück</button></div>
+    <div class="btnrow"><button class="btn ghost" onclick="go(3)">Zurück</button></div>
   </section>
 
-  <!-- SCHRITT 4: BESTÄTIGUNG -->
-  <section id="s4">
+  <!-- SCHRITT 5: BESTÄTIGUNG -->
+  <section id="s5">
     <h1>Bestellung eingegangen 💌</h1>
     <p class="sub">Bestellnummer <b id="ordNo">LP-2026-0001</b> · <span id="ordTime" class="stamp"></span></p>
+    <div class="sumbox" id="ordBox"></div>
     <div class="note" style="margin-top:16px">
       <b>So geht es weiter:</b><br>
       1. Wir schreiben den Liedtext aus deiner Geschichte (KI-unterstützt, geprüft).<br>
       2. Du hörst eine <b>Preview</b> und kannst bis zu 2× nachbessern.<br>
-      3. Freigabe → Finalisierung → Reveal-Link + Download.
+      3. Freigabe → Finalisierung → Reveal-Link, Download & Extras (je nach Auswahl).
     </div>
     <div class="note" style="background:rgba(217,83,79,.1); border-color:var(--coral); color:#7a2f2c;">
-      <b>Zum Widerruf bei personalisierten Produkten:</b> Nach Produktionsbeginn ist das Widerrufsrecht gesetzlich ausgeschlossen (§ 312g Abs. 2 Nr. 1 BGB). Solltest du dennoch widerrufen, prüfen wir individuell, ob die Voraussetzungen vorliegen. Der Button „Vertrag widerrufen" ist immer unten erreichbar.
+      <b>Zum Widerruf bei personalisierten Produkten:</b> Nach Produktionsbeginn ist das Widerrufsrecht gesetzlich ausgeschlossen (§ 312g Abs. 2 Nr. 1 BGB). Solltest du dennoch widerrufen, prüfen wir individuell. Der Button „Vertrag widerrufen" ist immer unten erreichbar.
     </div>
     <div class="ainote">KI-unterstützt erstellt · Made with AI by Liederpost (EU AI Act Art. 50)</div>
-    <div style="margin-top:18px"><button class="btn primary" onclick="location.reload()">Neue Demo starten</button></div>
+    <div class="btnrow"><button class="btn primary" onclick="location.reload()">Neue Demo starten</button></div>
   </section>
 
   <div class="ainote" style="margin-top:26px">
     Impressum · Datenschutz · AGB · Widerruf<br>
-    Alle Lieder werden KI-unterstützt erstellt und nach EU-KI-Verordnung gekennzeichnet.
+    Alle Lieder & Medien werden KI-unterstützt erstellt und nach EU-KI-Verordnung gekennzeichnet.
   </div>
 </div>
 
@@ -209,14 +245,101 @@
 </div>
 
 <script>
-let state = { anlass:'Geburtstag', paket:'Das Geschenk', price:'29,90' };
+/* ===== Daten (Preise = Doc 11 Produktkatalog, brutto) ===== */
+const PK = {
+  e:   { name:'Einzelsong',      price:14.90, tier:1 },
+  h:   { name:'Der Stapel',      price:29.90, tier:2 },
+  b:   { name:'Bühne',           price:39.90, tier:3 },
+  ew:  { name:'Erinnerungswerk', price:149.00, tier:4 },
+  sig: { name:'Signature',       price:290.00, tier:5 }
+};
+/* minTier = ab welchem Paket das Extra schon ENTHALTEN ist (0 = nie enthalten) */
+const EXTRAS = [
+  { g:'🎬 Video & Medien' },
+  { id:'collage', name:'Foto/Video-Collage (1080p)', price:19.90, minTier:4, note:'Fotos → Film zum Lied · 2K +9,90 € · 4K +19,90 €' },
+  { id:'lyricvid', name:'Lyric-Video', price:0, minTier:1, note:'singender Text zum Mitlesen — in allen Paketen inklusive' },
+  { id:'film', name:'Reaktionsfilm (professionell geschnitten)', price:19.90, minTier:4, note:'aus dem Empfänger-Upload' },
+  { id:'pptx', name:'PPTX/PDF-Slideshow (Beamer-Show)', price:12.90, minTier:0, note:'fertige Präsentation für die Feier — einfach am Beamer abspielen' },
+  { g:'🎤 Musik & Stimme' },
+  { id:'karaoke', name:'Mitsing-/Karaoke-Paket', price:6.90, minTier:3, note:'Stems + singender Text' },
+  { id:'spoken', name:'Spoken-Word-Widmung', price:2.90, minTier:3, note:'deine echte Stimme vor dem Lied' },
+  { id:'bi', name:'Zweisprachige Fassung (DE+EN/TR/PL)', price:9.90, minTier:0, note:'' },
+  { id:'dialekt', name:'Dialekt-Fassung (Bairisch/Schwäbisch/Kölsch/Wienerisch)', price:6.90, minTier:0, note:'QA-geprüft' },
+  { id:'notes', name:'Lead-Sheet/Noten-PDF', price:4.90, minTier:0, note:'Manufaktur-Optik zum Ausdrucken' },
+  { g:'💌 Print & Versand' },
+  { id:'lyricpdf', name:'Lyric-Poster (PDF)', price:4.90, minTier:0, note:'' },
+  { id:'lyricprint', name:'Lyric-Poster gedruckt', price:12.90, minTier:0, note:'' },
+  { id:'klangpost', name:'Klangpost-Karte (QR + Widmung, gedruckt)', price:6.90, minTier:3, note:'' },
+  { id:'cd', name:'CD (inkl. Versand)', price:14.90, minTier:0, note:'' },
+  { id:'usb', name:'USB-Stick (Kassetten-Look)', price:24.90, minTier:0, note:'' },
+  { g:'🎁 Erlebnis' },
+  { id:'termin', name:'Termin-Zustellung (Tag & Stunde)', price:2.90, minTier:0, note:'' },
+  { id:'doppel', name:'Termin-Doppel — 2 Anlässe prepaid', price:44.90, minTier:0, note:'kein Abo, einfach 2 vorausbezahlte Anlässe' }
+];
 
+const state = { anlass:'Geburtstag', pk:'h', sel:new Set() };
+const eur = n => n.toFixed(2).replace('.', ',') + ' €';
+
+/* ===== Rendering ===== */
+function renderExtras(){
+  const host = document.getElementById('extras'); host.innerHTML='';
+  const tier = PK[state.pk].tier;
+  EXTRAS.forEach(ex=>{
+    if(ex.g){ const h=document.createElement('h3'); h.textContent=ex.g; host.appendChild(h); return; }
+    const incl = ex.minTier>0 && tier>=ex.minTier;
+    const el = document.createElement('label');
+    el.className = 'extra' + (incl?' incl':'') + (!incl && state.sel.has(ex.id)?' sel':'');
+    el.innerHTML = `<input type="checkbox" ${incl?'checked disabled':''} data-id="${ex.id}" ${(!incl&&state.sel.has(ex.id))?'checked':''}>
+      <span style="flex:1"><span class="en">${ex.name}</span>${incl?' <span class="badge bundle">Im Paket enthalten ✓</span>':''}${ex.note?`<div class="ed">${ex.note}</div>`:''}</span>
+      <span class="ep">${ex.price>0?eur(ex.price):'–'}</span>`;
+    el.querySelector('input').addEventListener('change', ev=>{
+      if(ev.target.checked){ state.sel.add(ex.id); } else { state.sel.delete(ex.id); }
+      renderExtras(); refreshSum();
+    });
+    host.appendChild(el);
+  });
+}
+function calc(){
+  const pk = PK[state.pk];
+  const tier = pk.tier;
+  let extrasSum = 0; let cnt = 0; const lines=[];
+  EXTRAS.forEach(ex=>{
+    if(ex.g || (ex.minTier>0 && tier>=ex.minTier)) return;
+    if(state.sel.has(ex.id)){ extrasSum += ex.price; cnt++; lines.push(ex.name); }
+  });
+  const disc = cnt>=3 ? extrasSum*0.15 : 0;
+  const total = pk.price + extrasSum - disc;
+  return {pk, extrasSum, cnt, disc, total, lines};
+}
+function refreshSum(){
+  const c = calc();
+  document.getElementById('sbPack').textContent = '· '+c.pk.name;
+  document.getElementById('sbPackP').textContent = eur(c.pk.price);
+  document.getElementById('sbCnt').textContent = c.cnt>0 ? `· ${c.cnt} gewählt` : '· keine gewählt';
+  document.getElementById('sbExtras').textContent = eur(c.extrasSum);
+  document.getElementById('sbDiscRow').style.display = c.disc>0 ? 'flex':'none';
+  document.getElementById('sbDisc').textContent = '− '+eur(c.disc);
+  document.getElementById('sbTotal').textContent = eur(c.total);
+  // Checkout-Box
+  const co = document.getElementById('coBox');
+  let html = `<div class="sumrow"><span>Anlass</span><b>${state.anlass}</b></div>
+    <div class="sumrow"><span>Paket</span><b>${c.pk.name} — ${eur(c.pk.price)}</b></div>`;
+  if(c.lines.length) html += `<div class="sumrow"><span>Extras (${c.cnt})<small><br>${c.lines.join(' · ')}</small></span><b>${eur(c.extrasSum)}</b></div>`;
+  if(c.disc>0) html += `<div class="sumrow disc"><span>Bundle-Rabatt (−15 %)</span><b>− ${eur(c.disc)}</b></div>`;
+  html += `<div class="sumrow total"><span>Gesamt</span><span class="stamp">${eur(c.total)}</span></div>`;
+  co.innerHTML = html;
+  document.getElementById('btnPreis').textContent = eur(c.total);
+  window._total = eur(c.total);
+}
+
+/* ===== Navigation ===== */
 function go(n){
   document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
-  [1,2,3].forEach(i=>document.getElementById('d'+i)?.classList.toggle('on', i<=n));
+  [1,2,3,4].forEach(i=>document.getElementById('d'+i)?.classList.toggle('on', i<=n));
   window.scrollTo({top:0, behavior:'smooth'});
-  if(n===3) refreshSum();
+  if(n===3){ renderExtras(); refreshSum(); }
+  if(n===4){ refreshSum(); }
 }
 document.querySelectorAll('#anlaesse .chip').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('#anlaesse .chip').forEach(x=>x.classList.remove('sel'));
@@ -224,14 +347,10 @@ document.querySelectorAll('#anlaesse .chip').forEach(c=>c.addEventListener('clic
 }));
 document.querySelectorAll('#pakete .card').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('#pakete .card').forEach(x=>x.classList.remove('sel'));
-  c.classList.add('sel'); state.paket=c.dataset.p; state.price=c.dataset.price;
+  c.classList.add('sel'); state.pk=c.dataset.pk;
+  if(document.getElementById('s3').classList.contains('active')){ renderExtras(); }
+  refreshSum();
 }));
-function refreshSum(){
-  document.getElementById('sumAnlass').textContent=state.anlass;
-  document.getElementById('sumPaket').textContent=state.paket;
-  document.getElementById('sumPreis').textContent=state.price+' €';
-  document.getElementById('btnPreis').textContent=state.price+' €';
-}
 document.querySelectorAll('.req').forEach(c=>c.addEventListener('change',()=>{
   const all=[...document.querySelectorAll('.req')].every(x=>x.checked);
   document.getElementById('orderBtn').disabled=!all;
@@ -244,7 +363,10 @@ function order(){
   const no='LP-2026-'+String(Math.floor(Math.random()*9000)+1000);
   document.getElementById('ordNo').textContent=no;
   document.getElementById('ordTime').textContent=new Date().toLocaleString('de-DE');
-  go(4);
+  document.getElementById('ordBox').innerHTML =
+    `<div class="sumrow"><span>Deine Auswahl</span><b>${state.anlass} · ${PK[state.pk].name}</b></div>
+     <div class="sumrow total"><span>Gesamt</span><span class="stamp">${window._total||'–'}</span></div>`;
+  go(5);
 }
 function wrOpen(){ document.getElementById('wrModal').classList.add('open'); wrStep(1); }
 function wrClose(){ document.getElementById('wrModal').classList.remove('open'); }
@@ -255,6 +377,7 @@ function wrConfirm(){
   document.getElementById('wrTime').textContent=new Date().toLocaleString('de-DE');
   wrStep(3);
 }
+refreshSum();
 </script>
 </body>
 </html>
