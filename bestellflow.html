@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Liederpost — Bestellflow (App-Prototyp v1)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#1C2B4A; --paper:#FBF6EC; --yellow:#E8A33D; --coral:#D9534F; --salbei:#7A9E7E; --muted:#6b6a63; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:Inter,system-ui,sans-serif; background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:520px; margin:0 auto; padding:0 18px 120px; }
+  .top{ display:flex; align-items:center; justify-content:space-between; padding:14px 0 8px; position:sticky; top:0; background:var(--paper); z-index:5; }
+  .logo{ font-family:Fraunces,Georgia,serif; font-size:19px; font-weight:600; }
+  .draft{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#b3a58a; }
+  h1{ font-family:Fraunces,Georgia,serif; font-size:clamp(24px,6vw,30px); line-height:1.2; margin:18px 0 6px; }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.6; }
+  .stepsbar{ display:flex; gap:8px; margin:18px 0 6px; }
+  .stepdot{ flex:1; height:4px; border-radius:2px; background:rgba(28,43,74,.12); }
+  .stepdot.on{ background:var(--yellow); }
+  section{ display:none; animation:fade .25s ease; }
+  section.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+  .chiprow{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
+  .chip{ border:1.5px solid rgba(28,43,74,.18); background:#fff; border-radius:999px; padding:10px 14px; font-size:14px; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; gap:7px; }
+  .chip.sel{ border-color:var(--ink); background:var(--ink); color:var(--paper); }
+  textarea, input{ width:100%; border:1.5px solid rgba(28,43,74,.18); border-radius:12px; padding:13px 14px; font:inherit; font-size:15px; background:#fff; color:var(--ink); margin-top:8px; }
+  textarea{ min-height:120px; resize:vertical; }
+  .voicebtn{ margin-top:10px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:12px; padding:15px 20px; font-weight:600; font-size:15.5px; cursor:pointer; border:none; min-height:48px; width:100%; }
+  .btn.primary{ background:var(--ink); color:var(--paper); }
+  .btn.gold{ background:var(--yellow); color:var(--ink); }
+  .btn.ghost{ background:transparent; border:1.5px solid rgba(28,43,74,.25); color:var(--ink); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .card{ background:#fff; border:1.5px solid rgba(28,43,74,.12); border-radius:16px; padding:16px; margin-top:12px; cursor:pointer; }
+  .card.sel{ border-color:var(--yellow); box-shadow:0 6px 20px rgba(232,163,61,.18); }
+  .card .row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .card .t{ font-weight:600; font-size:15.5px; }
+  .card .p{ font-family:Fraunces,Georgia,serif; font-size:19px; }
+  .card .d{ color:var(--muted); font-size:13.5px; margin-top:5px; line-height:1.5; }
+  .badge{ font-size:11px; background:var(--yellow); border-radius:999px; padding:3px 9px; font-weight:600; }
+  .check{ display:flex; gap:11px; align-items:flex-start; background:#fff; border:1.5px solid rgba(28,43,74,.12); border-radius:12px; padding:13px 14px; margin-top:10px; font-size:13.5px; line-height:1.55; color:var(--ink); }
+  .check input{ width:20px; height:20px; min-width:20px; margin:1px 0 0; accent-color:var(--ink); }
+  .note{ background:rgba(122,158,126,.14); border-left:3px solid var(--salbei); border-radius:8px; padding:11px 13px; font-size:13px; line-height:1.55; color:#41563f; margin-top:12px; }
+  .ainote{ text-align:center; font-size:12px; color:var(--muted); margin-top:16px; line-height:1.6; }
+  .sumrow{ display:flex; justify-content:space-between; font-size:14.5px; padding:9px 0; border-bottom:1px dashed rgba(28,43,74,.15); }
+  .sumrow.total{ border-bottom:none; font-weight:700; font-size:16px; padding-top:12px; }
+  .fieldlabel{ font-size:13px; font-weight:600; margin-top:14px; display:block; }
+  h3{ font-family:Fraunces,Georgia,serif; font-size:19px; margin:22px 0 2px; }
+  .footerbar{ position:fixed; left:0; right:0; bottom:0; background:rgba(251,246,236,.96); backdrop-filter:blur(6px); border-top:1px solid rgba(28,43,74,.1); padding:10px 18px calc(10px + env(safe-area-inset-bottom)); z-index:50; }
+  .footerbar .inner{ max-width:520px; margin:0 auto; display:flex; gap:10px; align-items:center; justify-content:space-between; }
+  .wrbtn{ font-size:13.5px; font-weight:600; color:var(--ink); background:#fff; border:1.5px solid rgba(28,43,74,.35); border-radius:10px; padding:10px 14px; cursor:pointer; min-height:44px; }
+  .footerbar .hint{ font-size:11px; color:var(--muted); line-height:1.4; }
+  .modal{ position:fixed; inset:0; background:rgba(28,43,74,.5); display:none; align-items:flex-end; justify-content:center; z-index:100; }
+  .modal.open{ display:flex; }
+  .sheet{ background:var(--paper); width:100%; max-width:520px; border-radius:20px 20px 0 0; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto; }
+  .sheet h2{ font-family:Fraunces,Georgia,serif; font-size:21px; margin-bottom:8px; }
+  .sheet .sub{ font-size:13.5px; }
+  .confirmbox{ background:#fff; border:1.5px solid var(--salbei); border-radius:12px; padding:14px; margin-top:14px; font-size:13.5px; line-height:1.6; }
+  .stamp{ font-family:Fraunces,Georgia,serif; }
+  .small{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:10px; }
+  a{ color:var(--ink); }
+  @media (max-width:400px){ .wrap{ padding:0 14px 120px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">Liederpost<span style="color:var(--yellow)">.</span></div>
+    <div class="draft">Prototyp v1 · Demo</div>
+  </div>
+
+  <div class="stepsbar">
+    <div class="stepdot on" id="d1"></div><div class="stepdot" id="d2"></div><div class="stepdot" id="d3"></div>
+  </div>
+
+  <!-- SCHRITT 1: ERZÄHLEN -->
+  <section id="s1" class="active">
+    <h1>Worum soll es gehen?</h1>
+    <p class="sub">Wähle den Anlass — daraus bauen wir dein Lied.</p>
+    <div class="chiprow" id="anlaesse">
+      <button class="chip sel" data-a="Geburtstag">🎂 Geburtstag</button>
+      <button class="chip" data-a="Hochzeit">💍 Hochzeit</button>
+      <button class="chip" data-a="Jubiläum">🥂 Jubiläum</button>
+      <button class="chip" data-a="Andenken">🕊️ Andenken</button>
+      <button class="chip" data-a="Jahrgang">🎓 Jahrgang</button>
+      <button class="chip" data-a="Firmen">💼 Firma</button>
+    </div>
+    <label class="fieldlabel" for="story">Erzähle die Geschichte</label>
+    <textarea id="story" placeholder="Wer wird beschenkt? Was ist besonders? Ein paar Stichpunkte reichen — kein Songtext nötig."></textarea>
+    <button class="btn ghost voicebtn" onclick="voiceDemo(this)">🎙️ Sprachnotiz aufnehmen (Demo)</button>
+    <p class="small">In der finalen App kannst du hier direkt sprechen — unsere KI schreibt daraus den Liedtext. <em>(Art.-9-Hinweis: Stimme = besondere Kategorie, separate Einwilligung folgt im Checkout.)</em></p>
+    <div style="margin-top:18px"><button class="btn primary" onclick="go(2)">Weiter zur Paketwahl</button></div>
+  </section>
+
+  <!-- SCHRITT 2: PAKET -->
+  <section id="s2">
+    <h1>Welches Paket?</h1>
+    <p class="sub">Jederzeit nachbesserbar — bis du zufrieden bist, wird geliefert.</p>
+    <div id="pakete">
+      <div class="card" data-p="Einzelsong" data-price="14,90">
+        <div class="row"><span class="t">Einzelsong</span><span class="p">14,90 €</span></div>
+        <div class="d">1 Lied, 1 Revision · als Download</div>
+      </div>
+      <div class="card sel" data-p="Klassik" data-price="29,90">
+        <div class="row"><span class="t">Das Geschenk <span class="badge">Beliebt</span></span><span class="p">29,90 €</span></div>
+        <div class="d">1 Lied, 2 Revisionen · Reveal-Seite + Download · persönliche Widmung</div>
+      </div>
+      <div class="card" data-p="Bühne" data-price="39,90">
+        <div class="row"><span class="t">Bühne</span><span class="p">39,90 €</span></div>
+        <div class="d">+ Karaoke-/Lyric-Video · QR-Karte zum Verschenken</div>
+      </div>
+    </div>
+    <div class="note">💡 Premium & Signature (149 € / 290 €) folgen im nächsten Ausbau (Mehrere Lieder, Album, hochwertige Prints).</div>
+    <div style="margin-top:18px; display:flex; gap:10px">
+      <button class="btn ghost" onclick="go(1)">Zurück</button>
+      <button class="btn primary" onclick="go(3)">Weiter zum Checkout</button>
+    </div>
+  </section>
+
+  <!-- SCHRITT 3: CHECKOUT -->
+  <section id="s3">
+    <h1>Fast fertig</h1>
+    <p class="sub">Übersicht & Bestätigungen — so wie es rechtlich vorgeschrieben ist.</p>
+    <div style="margin-top:16px">
+      <div class="sumrow"><span>Anlass</span><b id="sumAnlass">Geburtstag</b></div>
+      <div class="sumrow"><span>Paket</span><b id="sumPaket">Das Geschenk</b></div>
+      <div class="sumrow total"><span>Gesamt</span><span class="stamp" id="sumPreis">29,90 €</span></div>
+    </div>
+    <label class="fieldlabel" for="kname">Dein Name</label>
+    <input id="kname" placeholder="Vor- und Nachname">
+    <label class="fieldlabel" for="kmail">E-Mail (für Lieferung & Belege)</label>
+    <input id="kmail" type="email" placeholder="du@beispiel.de">
+    <label class="fieldlabel" for="kb">Für wen ist das Lied?</label>
+    <input id="kb" placeholder="z. B. „Anna zum 60."">
+
+    <h3>Bevor es losgeht</h3>
+    <label class="check"><input type="checkbox" class="req" id="c1"><span><b>Start der Produktion:</b> Ich stimme zu, dass die Produktion sofort beginnt. Mir ist bekannt, dass ich dadurch mein Widerrufsrecht verliere (§ 356 Abs. 5 BGB). <a href="#" onclick="return false">Details</a></span></label>
+    <label class="check"><input type="checkbox" class="req" id="c2"><span><b>Rechte an den Inhalten:</b> Ich bestätige, dass ich nur eigene Sprachnotizen/Texte hochlade bzw. die Rechte aller Mitwirkenden besitze, und stelle Liederpost von Ansprüchen Dritter frei.</span></label>
+    <label class="check"><input type="checkbox" class="req" id="c3"><span><b>Einwilligung (Art. 9 DSGVO):</b> Ich willige in die Verarbeitung besonderer Daten ein (Stimme, Texte über Dritte; bei Kinderfotos: elterliche Zustimmung liegt vor). <a href="#" onclick="return false">Datenschutz</a></span></label>
+    <label class="check"><input type="checkbox" class="req" id="c4"><span><b>AGB & Revisionen:</b> AGB anerkannt — inkl. bis zu 2 Nachbesserungsrunden vor der Finalisierung; danach ist die Produktion für personalisierte Produkte abgeschlossen. <a href="#" onclick="return false">AGB</a></span></label>
+
+    <div class="ainote" style="text-align:left; margin-top:14px">🤖 Transparenz: Alle Lieder werden <b>KI-unterstützt</b> erstellt und nach EU-KI-Verordnung gekennzeichnet. Keine Sorge: Text, Anlass und Widmung kommen von <em>deiner</em> Geschichte.</div>
+
+    <div style="margin-top:16px"><button class="btn gold" id="orderBtn" disabled onclick="order()">Jetzt bestellen — <span id="btnPreis">29,90 €</span></button></div>
+    <p class="small">Demo-Klick — es wird nichts berechnet. Zahlung später über Stripe/PayPal.</p>
+    <div style="margin-top:10px"><button class="btn ghost" onclick="go(2)">Zurück</button></div>
+  </section>
+
+  <!-- SCHRITT 4: BESTÄTIGUNG -->
+  <section id="s4">
+    <h1>Bestellung eingegangen 💌</h1>
+    <p class="sub">Bestellnummer <b id="ordNo">LP-2026-0001</b> · <span id="ordTime" class="stamp"></span></p>
+    <div class="note" style="margin-top:16px">
+      <b>So geht es weiter:</b><br>
+      1. Wir schreiben den Liedtext aus deiner Geschichte (KI-unterstützt, geprüft).<br>
+      2. Du hörst eine <b>Preview</b> und kannst bis zu 2× nachbessern.<br>
+      3. Freigabe → Finalisierung → Reveal-Link + Download.
+    </div>
+    <div class="note" style="background:rgba(217,83,79,.1); border-color:var(--coral); color:#7a2f2c;">
+      <b>Zum Widerruf bei personalisierten Produkten:</b> Nach Produktionsbeginn ist das Widerrufsrecht gesetzlich ausgeschlossen (§ 312g Abs. 2 Nr. 1 BGB). Solltest du dennoch widerrufen, prüfen wir individuell, ob die Voraussetzungen vorliegen. Der Button „Vertrag widerrufen" ist immer unten erreichbar.
+    </div>
+    <div class="ainote">KI-unterstützt erstellt · Made with AI by Liederpost (EU AI Act Art. 50)</div>
+    <div style="margin-top:18px"><button class="btn primary" onclick="location.reload()">Neue Demo starten</button></div>
+  </section>
+
+  <div class="ainote" style="margin-top:26px">
+    Impressum · Datenschutz · AGB · Widerruf<br>
+    Alle Lieder werden KI-unterstützt erstellt und nach EU-KI-Verordnung gekennzeichnet.
+  </div>
+</div>
+
+<!-- WIDERRUFSBUTTON (immer sichtbar, § 356a BGB) -->
+<div class="footerbar">
+  <div class="inner">
+    <button class="wrbtn" onclick="wrOpen()">Vertrag widerrufen</button>
+    <div class="hint">Pflichtfunktion nach<br>§ 356a BGB (Demo)</div>
+  </div>
+</div>
+
+<!-- Widerruf-Modal: 2 Stufen, KEIN Grund-Feld -->
+<div class="modal" id="wrModal">
+  <div class="sheet">
+    <div id="wrStep1">
+      <h2>Vertrag widerrufen</h2>
+      <p class="sub">Du kannst Verträge hier jederzeit widerrufen — so einfach wie der Abschluss. Nach dem Klick geht es zur Eingabe (Schritt 1 von 2).</p>
+      <div style="margin-top:16px"><button class="btn primary" onclick="wrStep(2)">Weiter zur Widerrufsmaske</button></div>
+      <button class="btn ghost" style="margin-top:10px" onclick="wrClose()">Abbrechen</button>
+    </div>
+    <div id="wrStep2" style="display:none">
+      <h2>Widerruf bestätigen</h2>
+      <p class="sub">Bitte nur diese drei Angaben — <b>einen Grund fragen wir nicht ab</b> (gesetzlich nicht erforderlich).</p>
+      <label class="fieldlabel">Name</label><input id="wrName" placeholder="Vor- und Nachname">
+      <label class="fieldlabel">Bestellnummer</label><input id="wrNo" placeholder="z. B. LP-2026-0001">
+      <label class="fieldlabel">E-Mail</label><input id="wrMail" type="email" placeholder="du@beispiel.de">
+      <div style="margin-top:16px"><button class="btn gold" onclick="wrConfirm()">Widerruf bestätigen</button></div>
+      <button class="btn ghost" style="margin-top:10px" onclick="wrClose()">Abbrechen</button>
+    </div>
+    <div id="wrStep3" style="display:none">
+      <h2>Eingang bestätigt ✓</h2>
+      <div class="confirmbox">
+        Dein Widerruf ist am <b class="stamp" id="wrTime"></b> eingegangen.<br><br>
+        Eine Bestätigung senden wir zusätzlich per E-Mail. Bei personalisierten Produkten prüfen wir, ob das Widerrufsrecht durch den Produktionsbeginn bereits ausgeschlossen ist — wir melden uns dazu innerhalb von 48 Stunden.
+      </div>
+      <div style="margin-top:16px"><button class="btn primary" onclick="wrClose()">Schließen</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let state = { anlass:'Geburtstag', paket:'Das Geschenk', price:'29,90' };
+
+function go(n){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  [1,2,3].forEach(i=>document.getElementById('d'+i)?.classList.toggle('on', i<=n));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(n===3) refreshSum();
+}
+document.querySelectorAll('#anlaesse .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#anlaesse .chip').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel'); state.anlass=c.dataset.a;
+}));
+document.querySelectorAll('#pakete .card').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#pakete .card').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel'); state.paket=c.dataset.p; state.price=c.dataset.price;
+}));
+function refreshSum(){
+  document.getElementById('sumAnlass').textContent=state.anlass;
+  document.getElementById('sumPaket').textContent=state.paket;
+  document.getElementById('sumPreis').textContent=state.price+' €';
+  document.getElementById('btnPreis').textContent=state.price+' €';
+}
+document.querySelectorAll('.req').forEach(c=>c.addEventListener('change',()=>{
+  const all=[...document.querySelectorAll('.req')].every(x=>x.checked);
+  document.getElementById('orderBtn').disabled=!all;
+}));
+function voiceDemo(btn){
+  btn.textContent='🔴 Aufnahme läuft… (Demo)'; btn.disabled=true;
+  setTimeout(()=>{ btn.textContent='✓ Sprachnotiz „aufgenommen" (Demo)'; }, 1600);
+}
+function order(){
+  const no='LP-2026-'+String(Math.floor(Math.random()*9000)+1000);
+  document.getElementById('ordNo').textContent=no;
+  document.getElementById('ordTime').textContent=new Date().toLocaleString('de-DE');
+  go(4);
+}
+function wrOpen(){ document.getElementById('wrModal').classList.add('open'); wrStep(1); }
+function wrClose(){ document.getElementById('wrModal').classList.remove('open'); }
+function wrStep(n){
+  for(let i=1;i<=3;i++){ document.getElementById('wrStep'+i).style.display = (i===n)?'block':'none'; }
+}
+function wrConfirm(){
+  document.getElementById('wrTime').textContent=new Date().toLocaleString('de-DE');
+  wrStep(3);
+}
+</script>
+</body>
+</html>
