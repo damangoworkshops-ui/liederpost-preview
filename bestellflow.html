@@ -210,6 +210,7 @@
     <p class="sub">Bestellnummer <b id="ordNo">LP-2026-0001</b> · <span id="ordTime" class="stamp"></span></p>
     <div class="sumbox" id="ordBox"></div>
     <div id="rawNote"></div>
+    <div id="confirmNote"></div>
     <div class="note" style="margin-top:16px">
       <b>So geht es weiter:</b><br>
       1. Wir schreiben den Liedtext aus deiner Geschichte (KI-unterstützt, geprüft).<br>
@@ -457,6 +458,7 @@ function order(){
       <p>Du bekommst <b>2 Varianten zur Auswahl</b> — der Download von <b>1 Song</b> ist inklusive. Beide behalten oder mehr Varianten? Jederzeit upgraden (bis zur Produktionsfreigabe):</p>
       <div class="upopt"><button class="upbtn gold" onclick="upgradeTo('e')">⬆️ Auf „Einzelsong" upgraden — beide Varianten + alle Features</button></div></div>`;
   } else { rn.innerHTML=''; }
+  document.getElementById('confirmNote').innerHTML = '<div class="note" style="margin-top:12px">📧 <b>Widerrufs-Kenntnis bestätigt (§ 356 Abs. 5 BGB):</b> Die Bestätigung deiner Kenntnis ist dir soeben per E-Mail zugegangen. Das Widerrufsrecht für den digitalen Song endet mit dem Produktionsbeginn — deine gesetzlichen Rechte bei Mängeln bleiben unberührt.</div>';
   go(5);
 }
 function wrOpen(){ document.getElementById('wrModal').classList.add('open'); wrStep(1); }
