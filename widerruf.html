@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Widerruf — Liederpost</title>
+<style>
+:root{--bg:#FBF6EC;--ink:#2A2018;--muted:#7A6A55;--accent:#B4693A;--line:rgba(42,32,24,.12)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.65}
+.banner{background:#C9922E;color:#fff;text-align:center;font-size:12.5px;padding:7px 12px}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 60px}
+header{padding:20px 0 4px}
+header a{color:var(--ink);text-decoration:none;font-weight:700;font-size:21px}
+h1{font-size:26px;margin:16px 0 4px}
+h2{font-size:17px;margin:26px 0 6px}
+p,li{font-size:15.5px}
+.muted{color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:14px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff;margin-top:6px;min-height:48px}
+label{font-size:14px;font-weight:600;display:block;margin-top:12px}
+button{min-height:48px;width:100%;border:0;border-radius:12px;background:var(--accent);color:#fff;font-size:16px;font-weight:600;margin-top:16px;cursor:pointer}
+a{color:var(--accent)}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+footer a{color:var(--muted);margin-right:12px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="banner">⚠️ ENTWURF — anwaltliche Endfassung ausstehend (Kanzlei-Freigabe läuft)</div>
+<div class="wrap">
+  <header><a href="index.html">Liederpost</a></header>
+  <h1>Widerruf</h1>
+
+  <h2>Widerrufsbelehrung (Entwurf)</h2>
+  <p>Du hast das Recht, deine Bestellung binnen <b>vierzehn Tagen</b> ohne Angabe von Gründen zu widerrufen. Die Widerrufsfrist beginnt je nach Leistung mit Vertragsschluss bzw. Erhalt der Ware. Zur Ausübung genügt eine eindeutige Erklärung (z. B. per E-Mail an shop.damango@gmail.com, per Post oder über den Button unten).</p>
+
+  <h2>Besonderheiten bei Liederpost</h2>
+  <ul>
+    <li><b>Individuell angefertigte Produkte:</b> Für nicht vorgefertigte, nach individueller Bestimmung gefertigte Artikel besteht kein Widerrufsrecht (§ 312g Abs. 2 Nr. 1 BGB) — z. B. personalisierte physische Artikel.</li>
+    <li><b>Digitale Inhalte (Songs):</b> Mit deiner ausdrücklichen Zustimmung starten wir die Produktion sofort. Damit erlischt dein Widerrufsrecht mit Produktionsbeginn, sofern du dies bestätigt hast und wir dir die Bestätigung zur Verfügung stellen (§ 356 Abs. 5 BGB). Du erhältst die Bestätigung per E-Mail.</li>
+    <li><b>Unberührt bleibt:</b> deine gesetzlichen Rechte bei Mängeln (z. B. falscher Name, fehlerhafte Datei). Wir korrigieren unbegrenzt — zusätzlich gilt unser Neu-Casting-Versprechen (1× kostenlos, 14 Tage).</li>
+  </ul>
+
+  <h2>Widerrufsbutton (§ 356a BGB)</h2>
+  <p class="muted">Diesen Button stellen wir dauerhaft bereit: klar mit „Widerruf“ beschriftet, gut erreichbar, ohne Hürden.</p>
+  <div class="card" id="wrIntro">
+    <button onclick="wrOpen()">✋ Vertrag widerrufen</button>
+  </div>
+  <div class="card" id="wrForm" style="display:none">
+    <form onsubmit="wrSend(event)">
+      <label>Name<input required placeholder="Dein Name"></label>
+      <label>Bestellnummer<input required placeholder="z. B. LP-2026-0001"></label>
+      <label>E-Mail-Adresse<input required type="email" placeholder="name@beispiel.de"></label>
+      <button type="submit">Widerruf bestätigen</button>
+    </form>
+    <p class="muted" style="font-size:13px">Kein Grund nötig. Diese Vorschau-Seite versendet noch nichts.</p>
+  </div>
+  <div class="card" id="wrDone" style="display:none">
+    <p>✅ <b>Widerruf eingegangen (Demo).</b> Du erhältst eine Eingangsbestätigung mit Zeitstempel per E-Mail — damit kannst du den Zugang nachweisen.</p>
+  </div>
+
+  <h2>Muster-Widerrufsformular (Auszug)</h2>
+  <p class="muted">An: DAMANGO, Martina Kaehler, Vinnhorster Weg 83, 30419 Hannover, shop.damango@gmail.com — „Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über den Kauf der folgenden Produkte … Bestellt am … Name … Datum …“</p>
+
+  <footer>
+    <a href="index.html">Startseite</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerruf</a>
+  </footer>
+</div>
+<script>
+function wrOpen(){document.getElementById('wrIntro').style.display='none';document.getElementById('wrForm').style.display='block';}
+function wrSend(e){e.preventDefault();document.getElementById('wrForm').style.display='none';document.getElementById('wrDone').style.display='block';}
+</script>
+</body>
+</html>

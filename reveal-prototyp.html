@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Liederpost — Reveal-Prototyp</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; font-family: Inter, var(--font-sans, system-ui), sans-serif; color: var(--foreground, #222); }
+  .wrap { max-width: 760px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  h2.title { font-size: 17px; margin: 0; }
+  .note { color: var(--muted-foreground, #777); font-size: 12.5px; }
+  .row { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-start; }
+  .phone { width: 358px; border: 1.5px solid var(--border, #ccc); border-radius: 30px; padding: 13px 11px; position: relative; overflow: hidden; }
+  .notch { width: 70px; height: 5px; border-radius: 3px; background: var(--border, #ccc); margin: 0 auto 10px; opacity: .6; }
+  .viewport { position: relative; min-height: 452px; }
+  .screen { display: none; border-radius: 18px; min-height: 452px; padding: 26px 20px; flex-direction: column; gap: 11px; box-sizing: border-box; }
+  .screen.on { display: flex; animation: fadein .5s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none;} }
+  .s-dark { background: linear-gradient(180deg, #1C2B4A, #26375F); color: #FBF6EC; }
+  .s-paper { background: #FBF6EC; color: #1C2B4A; }
+  .kicker { font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.65; font-weight: 600; }
+  .big { font-family: Fraunces, Georgia, serif; font-size: 28px; line-height: 1.12; }
+  .btn { border: none; border-radius: 11px; padding: 12px 14px; text-align: center; font-weight: 600; font-size: 13.5px; cursor: pointer; font-family: inherit; transition: transform .15s ease, box-shadow .15s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn.primary { background: #E8A33D; color: #1C2B4A; box-shadow: 0 4px 14px rgba(232,163,61,.35); }
+  .btn.ghost { background: transparent; border: 1.5px solid currentColor; color: inherit; }
+  .body-line { height: 8px; border-radius: 4px; background: currentColor; opacity: 0.15; }
+  .body-line.short { width: 62%; }
+  .wave { display: flex; gap: 3px; align-items: flex-end; height: 34px; margin: 6px 0; }
+  .wave i { width: 4px; border-radius: 2px; background: #E8A33D; display: block; height: 6px; }
+  .playing .wave i { animation: puls 1.05s infinite ease-in-out; }
+  @keyframes puls { 0%,100% { transform: scaleY(.45);} 50% { transform: scaleY(1.15);} }
+  .play { width: 58px; height: 58px; border-radius: 50%; background: #E8A33D; color: #1C2B4A; display: flex; align-items: center; justify-content: center; font-size: 21px; margin: 4px auto 0; cursor: pointer; border: none; box-shadow: 0 6px 18px rgba(232,163,61,.4); }
+  .time { text-align: center; font-size: 11px; opacity: .65; letter-spacing: .06em; margin-top: 6px; }
+  .prog { height: 4px; border-radius: 2px; background: rgba(0,0,0,.15); overflow: hidden; }
+  .s-dark .prog { background: rgba(255,255,255,.18); }
+  .prog i { display: block; height: 100%; width: 0%; background: #E8A33D; transition: width .15s linear; }
+  .lyric { font-family: Fraunces, Georgia, serif; font-size: 15px; opacity: .8; text-align: center; min-height: 22px; transition: opacity .4s; }
+  .code { border: 1.6px dashed #C98A25; border-radius: 11px; padding: 10px; text-align: center; font-weight: 700; color: #8A6416; font-size: 14px; letter-spacing: .04em; background: rgba(232,163,61,.09); }
+  .mini { font-size: 10.5px; opacity: .6; line-height: 1.5; }
+  .opener { position: absolute; inset: 0; background: linear-gradient(180deg, #1C2B4A, #26375F); display: none; align-items: center; justify-content: center; z-index: 5; border-radius: 18px; }
+  .opener.on { display: flex; }
+  .envbig { width: 178px; height: 126px; position: relative; perspective: 700px; }
+  .envbig .ebody { position: absolute; inset: 0; background: #F2E8D5; border-radius: 9px; box-shadow: 0 14px 34px rgba(0,0,0,.4); }
+  .envbig .eletter { position: absolute; left: 13px; right: 13px; top: 12px; bottom: 36px; background: #FBF6EC; border-radius: 5px; transition: transform .75s ease .55s; display: flex; align-items: center; justify-content: center; font-family: Fraunces, Georgia, serif; color: #1C2B4A; font-size: 13px; }
+  .envbig .flap { position: absolute; left: 0; right: 0; top: 0; height: 70px; background: #E8DCC2; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top; transition: transform .6s ease; z-index: 4; backface-visibility: hidden; }
+  .envbig.open .flap { transform: rotateX(180deg); z-index: 1; }
+  .envbig.open .eletter { transform: translateY(-52px); }
+  .seal { position: absolute; left: 50%; top: 54px; width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; background: #D9534F; display: flex; align-items: center; justify-content: center; color: #FBF6EC; font-size: 16px; z-index: 6; transition: opacity .35s; }
+  .envbig.open .seal { opacity: 0; }
+  .toast { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(8px); background: #1C2B4A; color: #FBF6EC; padding: 9px 14px; border-radius: 10px; font-size: 12px; opacity: 0; transition: all .35s; z-index: 9; pointer-events: none; }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h2 class="title">Reveal-Prototyp — klickbar ✨</h2>
+    <div class="note">Fahre mit der Maus drüber und klicke durch: Öffnen → Brief → Lied (simulierte Wiedergabe, 5× Tempo) → Loop. Audio ist im Prototyp simuliert.</div>
+  </div>
+
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="viewport">
+
+      <!-- Szene 1 -->
+      <div class="screen s-dark on" id="s1">
+        <div class="kicker">Ein Geschenk für dich</div>
+        <div class="big">Für Anna</div>
+        <div class="note" style="color:#FBF6EC;opacity:.75;font-size:12.5px">Ein Lied von Max — extra für dich gemacht.</div>
+        <div style="margin:10px auto 6px">
+          <svg width="86" height="67" viewBox="0 0 44 34"><rect x="1.6" y="1.6" width="40.8" height="30.8" rx="4" fill="none" stroke="#E8A33D" stroke-width="2"/><path d="M3.5 4.5 L22 20 L40.5 4.5" fill="none" stroke="#E8A33D" stroke-width="2" stroke-linecap="round"/><circle cx="31.5" cy="24.5" r="6.6" fill="#D9534F"/><text x="31.5" y="28.3" font-size="10" text-anchor="middle" fill="#FBF6EC" font-family="Georgia,serif">♪</text></svg>
+        </div>
+        <button class="btn primary" id="btnOpen">💌 Öffnen</button>
+        <div class="mini" style="text-align:center;color:#FBF6EC;opacity:.5">🔊 Vorlesen lassen</div>
+      </div>
+
+      <!-- Szene 2 -->
+      <div class="screen s-paper" id="s2">
+        <div class="kicker" style="color:#8A6416">Eine Nachricht für dich</div>
+        <div class="big" style="font-size:17px">Liebe Anna,</div>
+        <div class="body-line"></div><div class="body-line"></div><div class="body-line short"></div>
+        <div class="body-line"></div><div class="body-line short"></div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" id="btnSong" style="border-color:#1C2B4A">▶ Dein Lied hören</button>
+      </div>
+
+      <!-- Szene 3 -->
+      <div class="screen s-dark" id="s3">
+        <div class="kicker">Anna — Dein Lied</div>
+        <div class="big" style="font-size:20px">„Weil du mein Zuhause bist"</div>
+        <div class="wave" id="wave"></div>
+        <div class="prog" style="margin-top:2px"><i id="progbar"></i></div>
+        <button class="play" id="btnPlay">▶</button>
+        <div class="time" id="timelbl">0:00 / 2:47</div>
+        <div class="lyric" id="lyric">…</div>
+        <div style="flex:1"></div>
+        <div class="mini" style="text-align:center">Demo: 5× Tempo · Audio simuliert</div>
+      </div>
+
+      <!-- Szene 4 -->
+      <div class="screen s-paper" id="s4">
+        <div class="kicker">Und jetzt?</div>
+        <div style="height:4px"></div>
+        <button class="btn ghost" id="btnReplay" style="border-color:#1C2B4A">♥ Nochmal hören</button>
+        <button class="btn ghost" id="btnDanke" style="border-color:#1C2B4A">💬 Danke sagen <span style="font-weight:400;opacity:.6">(an Max)</span></button>
+        <button class="btn primary" id="btnGift">🎁 Selbst ein Lied verschenken</button>
+        <div class="code">DEIN CODE: DANKE10 · gilt 14 Tage</div>
+        <div style="flex:1"></div>
+        <div class="mini">Privat erstellt für Anna · nicht öffentlich · läuft ab am 05.01.2027 · <span style="font-family:Fraunces,Georgia,serif; opacity:.85">Liederpost</span></div>
+        <div class="mini" style="margin-top:6px; opacity:.8">KI-unterstützt erstellt · Made with AI by Liederpost <span style="opacity:.6">(Kennzeichnung nach EU AI Act Art. 50)</span></div>
+      </div>
+
+      <!-- Umschlag-Overlay -->
+      <div class="opener" id="opener">
+        <div class="envbig" id="envbig">
+          <div class="ebody"></div>
+          <div class="eletter">Für Anna ♥</div>
+          <div class="flap"></div>
+          <div class="seal">♪</div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast">WhatsApp wird geöffnet… (Demo)</div>
+    </div>
+  </div>
+
+  <div class="note">Ablauf: Öffnen-Animation (0,8–1,4 s, lädt im Hintergrund das Lied) → Brief → Player → Loop mit Rabattcode am emotionalen Peak.</div>
+</div>
+
+<script>
+  var $ = function (s) { return document.querySelector(s); };
+  var current = 's1';
+
+  function show(id) {
+    ['s1','s2','s3','s4'].forEach(function (x) { document.getElementById(x).classList.remove('on'); });
+    document.getElementById(id).classList.add('on');
+    current = id;
+  }
+
+  // Waveform-Bars
+  (function () {
+    var w = $('#wave');
+    for (var i = 0; i < 24; i++) {
+      var b = document.createElement('i');
+      b.style.height = (8 + Math.round(Math.random() * 22)) + 'px';
+      b.style.animationDelay = (i * 0.07) + 's';
+      w.appendChild(b);
+    }
+  })();
+
+  // Szene 1 → Umschlag → Szene 2
+  $('#btnOpen').addEventListener('click', function () {
+    var ov = $('#opener'), env = $('#envbig');
+    ov.classList.add('on');
+    setTimeout(function () { env.classList.add('open'); }, 180);
+    setTimeout(function () { ov.classList.remove('on'); show('s2'); }, 1650);
+  });
+
+  // Player
+  var SIM_TOTAL = 167;      // echte Länge 2:47
+  var SPEED = 5;            // Demo-Tempo
+  var sim = 0, playing = false, timer = null;
+  var lyrics = [
+    [0.00, '…'],
+    [0.05, '…ich wollte dir schon lange sagen…'],
+    [0.30, '…dass jeder Tag mit dir ein Lied ist…'],
+    [0.55, '…und ich sing dir jetzt, was Worte nicht schaffen…'],
+    [0.80, '…weil du mein Zuhause bist…'],
+    [0.97, '…weil du mein Zuhause bist ♥']
+  ];
+
+  function fmt(t) {
+    t = Math.min(t, SIM_TOTAL);
+    var m = Math.floor(t / 60), s = Math.floor(t % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function upd() {
+    $('#progbar').style.width = Math.min(100, sim / SIM_TOTAL * 100) + '%';
+    $('#timelbl').textContent = fmt(sim) + ' / 2:47';
+    var frac = sim / SIM_TOTAL, line = '…';
+    for (var i = 0; i < lyrics.length; i++) { if (frac >= lyrics[i][0]) line = lyrics[i][1]; }
+    if (line !== $('#lyric').textContent) $('#lyric').textContent = line;
+  }
+
+  function tick() {
+    sim += 0.1 * SPEED; // 100ms real = SPEED×0.1s sim (Demo-Tempo)
+    if (sim >= SIM_TOTAL) { pause(); sim = SIM_TOTAL; upd(); $('#btnPlay').textContent = '✓'; setTimeout(function(){ if (current === 's3') show('s4'); }, 900); return; }
+    upd();
+  }
+
+  function play() {
+    if (playing) return;
+    playing = true; $('#btnPlay').textContent = '❚❚'; $('#s3').classList.add('playing');
+    if (sim >= SIM_TOTAL) sim = 0;
+    timer = setInterval(tick, 100); upd();
+  }
+  function pause() {
+    playing = false; clearInterval(timer); $('#btnPlay').textContent = '▶'; $('#s3').classList.remove('playing');
+  }
+  $('#btnPlay').addEventListener('click', function () { playing ? pause() : play(); });
+
+  // Navigation
+  $('#btnSong').addEventListener('click', function () { show('s3'); setTimeout(play, 350); });
+  $('#btnReplay').addEventListener('click', function () { sim = 0; $('#btnPlay').textContent = '▶'; show('s3'); setTimeout(play, 350); });
+  $('#btnDanke').addEventListener('click', function () {
+    var t = $('#toast'); t.classList.add('on'); setTimeout(function () { t.classList.remove('on'); }, 1600);
+  });
+  $('#btnGift').addEventListener('click', function () {
+    var t = $('#toast'); t.textContent = '→ liederpost.de (Demo)'; t.classList.add('on'); setTimeout(function () { t.classList.remove('on'); t.textContent = 'WhatsApp wird geöffnet… (Demo)'; }, 1600);
+  });
+</script>
+</body>
+</html>
