@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FBF6EC">
+<meta name="description" content="Liederpost — Aus deiner Geschichte wird ein persönliches Geschenklied. In Stunden fertig, 100% geprüft, ab 29,90 €.">
+<title>Liederpost — Dein persönliches Geschenklied</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1C2B4A; --paper:#FBF6EC; --gold:#E8A33D; --coral:#D9534F; --sage:#7A9E7E; --muted:#6b6f7b; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; color:var(--ink); background:var(--paper); overflow-x:hidden; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 18px; }
+  header { position:sticky; top:0; background:rgba(251,246,236,.94); backdrop-filter:blur(8px); border-bottom:1px solid rgba(28,43,74,.08); z-index:10; }
+  .nav { display:flex; align-items:center; gap:20px; padding:12px 0; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:10px; font-family:Fraunces,serif; font-weight:600; font-size:21px; color:var(--ink); text-decoration:none; }
+  .logo svg { display:block; }
+  .nav a.link { color:var(--ink); text-decoration:none; font-size:14.5px; opacity:.8; }
+  .nav a.link:hover { opacity:1; }
+  .spacer { flex:1; }
+
+  /* Buttons: Touch-freundlich (≥46px), inline-flex für saubere Zentrierung */
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:46px; border-radius:12px; padding:12px 22px;
+         font-weight:600; font-size:15px; text-decoration:none; cursor:pointer; border:none; font-family:inherit; text-align:center; }
+  .btn.primary { background:var(--gold); color:var(--ink); box-shadow:0 8px 22px rgba(232,163,61,.35); }
+  .btn.ghost { border:1.5px solid var(--ink); color:var(--ink); background:transparent; }
+  .btn.small { padding:9px 16px; min-height:40px; font-size:13.5px; }
+
+  .hero { display:flex; gap:44px; align-items:center; padding:56px 0 36px; flex-wrap:wrap; }
+  .hero .text { flex:1 1 320px; min-width:0; }
+  .kicker { font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--coral); font-weight:600; }
+  h1 { font-family:Fraunces,serif; font-weight:600; font-size:clamp(34px, 7.5vw, 52px); line-height:1.08; margin:14px 0 16px; }
+  .sub { font-size:clamp(16px, 4.2vw, 18px); line-height:1.6; color:var(--muted); max-width:520px; }
+  .trust { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; font-size:13px; color:var(--muted); }
+  .trust span b { color:var(--ink); }
+  .hero .art { flex:1 1 280px; min-width:0; display:flex; justify-content:center; }
+  .envcard { position:relative; width:min(340px, 100%); aspect-ratio:340/240; }
+  .env { position:absolute; inset:0; background:#fff; border:2px solid var(--ink); border-radius:14px; box-shadow:0 24px 60px rgba(28,43,74,.18); }
+  .env:before { content:""; position:absolute; left:0; right:0; top:0; height:50%; border-bottom:2px solid var(--ink);
+    clip-path:polygon(0 0,100% 0,50% 100%); background:linear-gradient(180deg,#fff, #f6f0e3); }
+  .seal { position:absolute; right:11%; bottom:14%; width:19%; aspect-ratio:1; border-radius:50%; background:var(--coral);
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:clamp(18px,5.5vw,26px); box-shadow:0 6px 18px rgba(217,83,79,.45); }
+  .postmark { position:absolute; left:10%; top:11%; width:25%; aspect-ratio:1; border:2px dashed var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; color:#C98A25; font-size:clamp(7px,2.3vw,10px); transform:rotate(-10deg); letter-spacing:.08em; text-align:center; line-height:1.3; }
+
+  section { padding:48px 0; }
+  h2 { font-family:Fraunces,serif; font-weight:600; font-size:clamp(26px, 5.5vw, 34px); margin:0 0 10px; }
+  .lead { color:var(--muted); font-size:16.5px; max-width:640px; line-height:1.65; }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; margin-top:28px; }
+  .step { background:#fff; border:1px solid rgba(28,43,74,.09); border-radius:16px; padding:20px; }
+  .step .num { font-family:Fraunces,serif; font-size:30px; color:var(--gold); }
+  .step h3 { margin:8px 0 6px; font-size:17px; }
+  .step p { margin:0; color:var(--muted); font-size:14.5px; line-height:1.6; }
+  .occ { display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; }
+  .chip { border:1.5px solid rgba(28,43,74,.16); border-radius:999px; padding:10px 17px; font-size:14.5px; background:#fff; }
+  .chip.hot { border-color:var(--coral); color:var(--coral); }
+  .prices { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:28px; align-items:stretch; }
+  .price { background:#fff; border:1px solid rgba(28,43,74,.09); border-radius:16px; padding:22px; display:flex; flex-direction:column; gap:8px; }
+  .price.hero { border:2px solid var(--gold); position:relative; box-shadow:0 14px 38px rgba(232,163,61,.2); }
+  .price.hero:before { content:"MEISTGEWÄHLT"; position:absolute; top:-11px; left:18px; background:var(--gold); color:var(--ink); font-size:10.5px; font-weight:700; letter-spacing:.12em; padding:4px 10px; border-radius:999px; }
+  .price .name { font-weight:600; font-size:15.5px; }
+  .price .amount { font-family:Fraunces,serif; font-size:34px; }
+  .price .amount small { font-family:Inter,sans-serif; font-size:12px; color:var(--muted); font-weight:400; }
+  .price ul { margin:6px 0 12px; padding-left:18px; color:var(--muted); font-size:13.5px; line-height:1.8; }
+  .price .btn { margin-top:auto; width:100%; }
+  .band { background:var(--ink); color:var(--paper); border-radius:20px; padding:28px 26px; display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-top:36px; }
+  .band .emoji { font-size:32px; }
+  .band p { margin:0; font-size:15.5px; line-height:1.6; opacity:.92; }
+  .band b { color:var(--gold); }
+  details { background:#fff; border:1px solid rgba(28,43,74,.09); border-radius:12px; padding:15px 17px; margin-top:10px; }
+  summary { font-weight:600; cursor:pointer; font-size:15.5px; min-height:32px; display:flex; align-items:center; }
+  details p { color:var(--muted); font-size:14.5px; line-height:1.65; margin:10px 0 0; }
+  .final { text-align:center; padding:60px 0 36px; }
+  .final h2 { font-size:clamp(28px, 6vw, 40px); }
+  footer { border-top:1px solid rgba(28,43,74,.1); padding:26px 0 40px; color:var(--muted); font-size:13px; }
+  footer .cols { display:flex; gap:24px; flex-wrap:wrap; justify-content:space-between; }
+  footer a { color:var(--muted); text-decoration:none; margin-right:14px; }
+  .previewnote { text-align:center; font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:#b3a58a; padding:10px 0 0; }
+
+  /* ===== Mobile-First Optimierungen ===== */
+  @media (max-width:760px) {
+    .nav { gap:10px; padding:11px 0; }
+    .nav a.link { display:none; }                 /* Anker bei Bedarf über Scroll */
+    .nav .btn.small { margin-left:auto; }
+    .hero { gap:30px; padding:34px 0 24px; }
+    section { padding:38px 0; }
+    .prices { grid-template-columns:1fr 1fr; }
+    .price.hero { order:-1; }                     /* Hero-Paket zuerst */
+    .band { padding:22px 18px; border-radius:16px; }
+    .final { padding:48px 0 28px; }
+    .hero .text .btn { flex:1 1 100%; }           /* CTAs volle Breite */
+  }
+  @media (max-width:520px) {
+    .prices { grid-template-columns:1fr; }
+    .steps { grid-template-columns:1fr; }
+    .trust { gap:10px; font-size:12.5px; }
+    footer .cols { flex-direction:column; gap:14px; }
+  }
+</style>
+</head>
+<body>
+
+<header><div class="wrap nav">
+  <a class="logo" href="#">
+    <svg width="34" height="27" viewBox="0 0 44 34"><rect x="1.6" y="1.6" width="40.8" height="30.8" rx="4" fill="none" stroke="#1C2B4A" stroke-width="2.4"/><path d="M3.8 4.6 L22 20 L40.2 4.6" fill="none" stroke="#1C2B4A" stroke-width="2.4" stroke-linecap="round"/><circle cx="31.5" cy="24.5" r="6.6" fill="#D9534F"/><text x="31.5" y="28.3" font-size="10" text-anchor="middle" fill="#FBF6EC" font-family="Georgia,serif">♪</text></svg>
+    Liederpost
+  </a>
+  <span class="spacer"></span>
+  <a class="link" href="#so">So funktioniert's</a>
+  <a class="link" href="#anlaesse">Anlässe</a>
+  <a class="link" href="#pakete">Pakete</a>
+  <a class="link" href="#faq">FAQ</a>
+  <a class="btn primary small" href="#pakete">Jetzt Lied erstellen</a>
+</div></header>
+
+<div class="wrap">
+  <div class="previewnote">— Preview v2 · läuft auf Stellvertreter-Domain (final: liederpost.de) —</div>
+
+  <div class="hero">
+    <div class="text">
+      <div class="kicker">Das persönliche Geschenklied</div>
+      <h1>Du erzählst.<br>Wir singen.</h1>
+      <p class="sub">Aus deiner Geschichte wird ein echtes Lied — mit Namen, Anekdoten und Gefühl. Perfekt für Menschen, die schon alles haben.</p>
+      <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="btn primary" href="#pakete">Lied erstellen — ab 29,90 €</a>
+        <a class="btn ghost" href="#so">So funktioniert's</a>
+      </div>
+      <div class="trust">
+        <span>✓ <b>100 %</b> geprüft &amp; freigegeben</span>
+        <span>✓ <b>Lieferung</b> in Stunden</span>
+        <span>✓ <b>Diskret</b> — dein Lied gehört dir</span>
+      </div>
+    </div>
+    <div class="art">
+      <div class="envcard">
+        <div class="env"></div>
+        <div class="postmark">LIEDERPOST<br>★<br>DEIN LIED</div>
+        <div class="seal">♪</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="so">
+    <h2>In drei Schritten zum Lied</h2>
+    <p class="lead">Kein Fragebogen-Marathon. Erzähl einfach — eine Sprachnachricht reicht.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h3>Erzählen</h3><p>Name, Anlass, 2–3 Anekdoten — tippen oder einsprechen. Unser Assistent fragt nur, was er wirklich braucht.</p></div>
+      <div class="step"><div class="num">2</div><h3>Wir singen</h3><p>Maschine &amp; Handwerk: dein Song entsteht in Minuten, wird von uns geprüft und poliert — professionell produziert.</p></div>
+      <div class="step"><div class="num">3</div><h3>Verschenken</h3><p>Persönliche Reveal-Seite zum Überraschen — auf Wunsch mit QR-Karte zum Ausdrucken oder Verschenken.</p></div>
+    </div>
+  </section>
+
+  <section id="anlaesse">
+    <h2>Für jeden Moment, der ein Lied verdient</h2>
+    <div class="occ">
+      <span class="chip hot">🎂 Geburtstag</span>
+      <span class="chip">💍 Hochzeit</span>
+      <span class="chip">🥂 Jubiläum</span>
+      <span class="chip">🎓 Abi &amp; Jahrgang</span>
+      <span class="chip">🕊️ Andenken &amp; Memorial</span>
+      <span class="chip">🏢 Firmen &amp; Teams</span>
+      <span class="chip">🐾 Für die Fellnase</span>
+      <span class="chip">😂 Roast zum Junggesellenabschied</span>
+    </div>
+  </section>
+
+  <section id="pakete">
+    <h2>Klare Pakete, faire Preise</h2>
+    <p class="lead">Vom schnellen Einzelsong bis zur großen Inszenierung. Alles digital — physisch nur, wenn du willst.</p>
+    <div class="prices">
+      <div class="price">
+        <div class="name">Einzelsong</div>
+        <div class="amount">14,90 €</div>
+        <ul><li>1 Song, ~2–3 Min.</li><li>Reveal-Link zum Verschenken</li><li>Lieferung in Stunden</li></ul>
+        <a class="btn ghost" href="#">Wählen</a>
+      </div>
+      <div class="price hero">
+        <div class="name">Das Geschenklied <span style="color:var(--coral)">♥</span></div>
+        <div class="amount">29,90 €</div>
+        <ul><li>1 Hero-Song, studiogeprüft</li><li>Reveal-Page mit Brief &amp; Namen</li><li>Rabattcode für den Beschenkten</li><li>Optionen: QR-Karte, Lyric-Video</li></ul>
+        <a class="btn primary" href="#">Jetzt starten</a>
+      </div>
+      <div class="price">
+        <div class="name">Bühne</div>
+        <div class="amount">39,90 €</div>
+        <ul><li>Hero + 2 B-Seiten inklusive</li><li>Alternates für dich &amp; die Familie</li><li>Prioritäts-Produktion</li></ul>
+        <a class="btn ghost" href="#">Wählen</a>
+      </div>
+      <div class="price">
+        <div class="name">Premium</div>
+        <div class="amount">149 €</div>
+        <ul><li>Alles aus Bühne</li><li>Physische Lyric-Karte (QR/NFC)</li><li>Reaktionsfilm-Option</li></ul>
+        <a class="btn ghost" href="#">Wählen</a>
+      </div>
+    </div>
+
+    <div class="band">
+      <span class="emoji">💌</span>
+      <p><b>Unsere Versprechen:</b> 100 % menschlich geprüft vor der Auslieferung · 1× kostenlose Neuproduktion bei Nichtgefallen · deine Geschichte bleibt privat (Reveal-Seite nicht öffentlich, mit Ablaufdatum) · alle Rechte am fertigen Lied liegen bei dir.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>Häufige Fragen</h2>
+    <details><summary>Wie schnell bekomme ich das Lied?</summary><p>In der Regel innerhalb weniger Stunden. Im Weihnachts-Peak vor dem 24.12. empfehlen wir, mindestens 3 Tage vorher zu bestellen.</p></details>
+    <details><summary>Was, wenn das Lied nicht gefällt?</summary><p>Einmal frei neu produzieren lassen — ohne Begründung. Zusätzlich prüft unser Team jedes Lied vor der Auslieferung auf Herz und Verstand.</p></details>
+    <details><summary>Muss die beschenkte Person technisch fit sein?</summary><p>Nein. Sie bekommt einen Link (oder die QR-Karte) und tippt auf „Öffnen". Der Rest passiert von selbst — ohne Konto, ohne App.</p></details>
+    <details><summary>Gehört mir das Lied wirklich?</summary><p>Ja. Du erhältst dein Lied als Datei, die Reveal-Seite bleibt 12 Monate verfügbar — danach kannst du sie verlängern.</p></details>
+    <details><summary>Was passiert mit meinen Daten?</summary><p>Deine Geschichte wird nur für die Produktion verwendet. Reveal-Seiten sind privat (nicht google-bar) und laufen automatisch ab.</p></details>
+  </section>
+
+  <div class="final">
+    <h2>Schenke kein Ding.<br>Schenke ein Gefühl.</h2>
+    <p class="lead" style="margin:10px auto 24px;">Tippe jetzt deine erste Zeile — den Rest übernehmen wir.</p>
+    <a class="btn primary" href="#pakete">Jetzt Lied erstellen</a>
+  </div>
+
+  <footer>
+    <div class="cols">
+      <div>
+        <strong style="font-family:Fraunces,serif; font-size:16px; color:var(--ink);">Liederpost</strong><br>
+        Du erzählst. Wir singen.
+      </div>
+      <div>
+        <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Widerruf</a>
+      </div>
+      <div>
+        liederpost.de <span style="opacity:.5">(nach Domain-Registrierung)</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>
