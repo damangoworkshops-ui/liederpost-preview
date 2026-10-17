@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dein Liederpost-Gutschein</title>
+<style>
+  :root{--navy:#1C2B4A;--cream:#FBF6EC;--coral:#D9534F;--gold:#E8A33D;--salbei:#6F8F72;--line:#E5DCCB;--muted:#6B7280}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--navy);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+  .wrap{max-width:620px;margin:0 auto;padding:22px 16px 90px}
+  .brand{font-weight:800;letter-spacing:.02em;font-size:14px;margin-bottom:26px}.brand span{color:var(--coral)}
+  h1{font-size:clamp(30px,8vw,44px);line-height:1.05;letter-spacing:-.03em;margin:8px 0 10px}
+  h2{font-size:22px;margin:0 0 6px}
+  p{margin:0 0 10px}.sub{color:var(--muted)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 8px 24px rgba(28,43,74,.06)}
+  .hero{background:linear-gradient(150deg,#1C2B4A,#2B4068);color:#fff;border:0}
+  .hero .sub{color:#D8DFEA}.hero .kicker{color:var(--gold);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .motivation{white-space:pre-line;font-size:16px;margin-top:8px}
+  .hero-note{font-size:13px;color:#D8DFEA;margin:12px 0 0;line-height:1.45}
+  .badge{display:inline-block;background:rgba(232,163,61,.18);color:var(--gold);font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;margin-bottom:8px}
+  label{display:block;font-size:13px;font-weight:800;margin:14px 0 5px}
+  input,textarea,select{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:13px;font:inherit;color:var(--navy);background:#fff;min-height:48px}
+  textarea{min-height:84px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:2px solid rgba(232,163,61,.45);border-color:var(--gold)}
+  .btn{border:0;border-radius:14px;padding:15px 16px;font:inherit;font-weight:800;cursor:pointer;min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%}
+  .btn.primary{background:var(--coral);color:#fff;margin-top:14px}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+  .btn.small{width:auto;padding:10px 13px;min-height:42px;font-size:13px}
+  .btn:disabled{opacity:.5}
+  .error{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px}
+  .hint{font-size:12.5px;color:var(--muted)}
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:13px;font-weight:500;margin:12px 0;min-height:44px}
+  .check input{width:22px;height:22px;min-height:0;margin-top:1px;flex:none}
+  .song{border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0;background:#fff}
+  .song .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:900;font-size:14px;margin-right:8px}
+  .song h3{display:flex;align-items:center;font-size:17px;margin:0 0 4px}
+  .song .meta{font-size:12.5px;color:var(--muted)}
+  .song .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .status{display:inline-block;font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px;background:#EEF2EA;color:#3F5C43;margin-left:6px}
+  .status.queued,.status.in_production,.status.qa{background:#FFF2D9;color:#7A5510}
+  .status.ready,.status.delivered{background:#E3F0E4;color:#315B37}
+  footer{position:fixed;bottom:0;left:0;right:0;background:rgba(251,246,236,.96);border-top:1px solid var(--line);padding:9px 16px;text-align:center;font-size:11px;color:var(--muted)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Lieder<span>post</span> · Ein Geschenk, das man hört</div>
+
+  <div id="loading" class="card"><p class="sub">Gutschein wird geladen…</p></div>
+  <div id="errorBox" class="card hidden"><h2>Das hat nicht geklappt.</h2><p id="errorText" class="sub"></p></div>
+
+  <section id="intro" class="hidden">
+    <div class="card hero">
+      <div class="kicker">Persönlicher Gutschein</div>
+      <h1 id="claimText"></h1>
+      <p class="motivation" id="motivationText"></p>
+      <div class="badge" id="songsBadge"></div>
+      <p class="hero-note">Du löst den Gutschein ein und gestaltest die Lieder für deine Menschen — jedes mit Empfänger und Anlass.</p>
+    </div>
+
+    <form id="claimForm" class="card">
+      <h2>Jetzt einlösen</h2>
+      <p class="sub">Damit wir deine Lieder zuordnen können. Kein Abo, keine Karte.</p>
+      <label for="name">Dein Name</label>
+      <input id="name" autocomplete="name" required>
+      <label for="email">E-Mail</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label class="check"><input id="consent" type="checkbox"><span>Ich bin einverstanden, dass Liederpost meine Angaben zur Abwicklung dieses Gutscheins verarbeitet. <span class="hint">(Pflicht; Details in der <a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a>.)</span></span></label>
+      <button class="btn primary" type="submit" id="claimBtn">Gutschein einlösen</button>
+      <p class="error" id="claimError"></p>
+    </form>
+  </section>
+
+  <section id="already" class="hidden">
+    <div class="card">
+      <h2>Dieser Gutschein ist schon eingelöst.</h2>
+      <p class="sub">Wenn du ihn selbst eingelöst hast, öffne bitte denselben Link auf demselben Gerät/Browser. Bei Problemen hilft Liederpost weiter.</p>
+    </div>
+  </section>
+
+  <section id="workshop" class="hidden">
+    <h1>Für wen werden<br>die Lieder?</h1>
+    <p class="sub">Jedes Lied bekommt einen Menschen und einen Anlass. So ist es wirklich persönlich — und du kannst es direkt weiterschicken. Einen Song darfst du auch für dich selbst behalten.</p>
+    <form id="songsForm">
+      <div id="songForms"></div>
+      <button class="btn primary" type="submit" id="songsBtn">Lieder starten</button>
+      <p class="error" id="songsError"></p>
+    </form>
+  </section>
+
+  <section id="done" class="hidden">
+    <div class="card">
+      <h2>Deine Lieder sind unterwegs 💌</h2>
+      <p class="sub">Du kannst die Links an deine Freunde schicken, sobald sie fertig sind. Der Status aktualisiert sich hier.</p>
+      <button class="btn ghost small" onclick="loadState()">Status aktualisieren</button>
+    </div>
+    <div id="songResults"></div>
+  </section>
+</div>
+<footer>Liederpost · persönlich, KI-unterstützt, mit Liebe gemacht.</footer>
+
+<script>
+const API_BASE = window.LIEDERPOST_API_BASE ||
+  ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000/api' : '/api');
+const code = new URLSearchParams(location.search).get('code') || '';
+const tokenKey = 'lp_claim_' + code;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let state = {voucher:null, claimToken:sessionStorage.getItem(tokenKey) || ''};
+const OCCASIONS = ['Geburtstag','Hochzeit','Jubiläum','Andenken','Jahrgang','Firma','Danke','Einfach so'];
+
+async function api(path, options = {}) {
+  const headers = Object.assign({}, options.headers || {});
+  if (state.claimToken) headers['Authorization'] = 'Bearer ' + state.claimToken;
+  if (options.body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, Object.assign({}, options, {headers}));
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) {
+    let detail = data.detail;
+    if (Array.isArray(detail)) detail = detail.map(x => x.msg || '').join(' ');
+    throw new Error(detail || 'Etwas ist schiefgelaufen.');
+  }
+  return data;
+}
+function show(id) { ['loading','errorBox','intro','already','workshop','done'].forEach(x => $(x).classList.toggle('hidden', x !== id)); }
+function fail(msg) { $('errorText').textContent = msg; show('errorBox'); }
+
+async function boot() {
+  if (!code) return fail('Kein Gutschein-Code im Link. Bitte den vollständigen Link öffnen.');
+  if (state.claimToken) {
+    try { const data = await api('/promo/voucher/state'); return renderState(data); }
+    catch (e) { sessionStorage.removeItem(tokenKey); state.claimToken = ''; }
+  }
+  try {
+    const voucher = await api('/promo/' + encodeURIComponent(code));
+    state.voucher = voucher;
+    if (voucher.status === 'revoked') return fail('Dieser Gutschein wurde zurückgezogen.');
+    if (voucher.status === 'expired') return fail('Dieser Gutschein ist leider abgelaufen.');
+    if (voucher.claimed) { show('already'); return; }
+    renderIntro(voucher);
+  } catch (e) { fail(e.message); }
+}
+function renderIntro(v) {
+  $('claimText').textContent = v.claim;
+  $('motivationText').textContent = v.motivation || '';
+  $('songsBadge').textContent = v.total_songs + ' Lieder für deine Menschen';
+  show('intro');
+}
+$('claimForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  $('claimError').textContent = '';
+  if (!$('consent').checked) { $('claimError').textContent = 'Bitte die Einwilligung bestätigen.'; return; }
+  const btn = $('claimBtn'); btn.disabled = true; btn.textContent = 'Wird eingelöst…';
+  try {
+    const data = await api('/promo/' + encodeURIComponent(code) + '/claim', {
+      method:'POST',
+      body: JSON.stringify({name:$('name').value.trim(), email:$('email').value.trim(), consent:true})
+    });
+    state.claimToken = data.claim_token;
+    sessionStorage.setItem(tokenKey, state.claimToken);
+    renderState(data.voucher);
+  } catch (e) { $('claimError').textContent = e.message; }
+  finally { btn.disabled = false; btn.textContent = 'Gutschein einlösen'; }
+});
+function renderState(voucher) {
+  state.voucher = voucher;
+  if (voucher.songs && voucher.songs.length) return renderSongs(voucher);
+  if (voucher.status === 'completed') { renderSongs(voucher); return; }
+  renderWorkshop(voucher);
+}
+function renderWorkshop(v) {
+  const host = $('songForms'); host.innerHTML = '';
+  for (let i = 0; i < v.total_songs; i++) {
+    const card = document.createElement('div');
+    card.className = 'song';
+    card.innerHTML = `<h3><span class="num">${i+1}</span> Lied ${i+1}</h3>
+      <p class="meta">Für wen ist dieses Lied?</p>
+      <label>Empfänger</label><input data-r="${i}" placeholder="z. B. Anna" required>
+      <label>Anlass</label><select data-o="${i}">${OCCASIONS.map(o => `<option>${esc(o)}</option>`).join('')}</select>
+      <label>Was ist besonders? <span class="hint">(optional)</span></label>
+      <textarea data-s="${i}" placeholder="Ein paar Stichpunkte reichen."></textarea>`;
+    host.appendChild(card);
+  }
+  show('workshop');
+}
+$('songsForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  $('songsError').textContent = '';
+  const songs = [];
+  for (let i = 0; i < state.voucher.total_songs; i++) {
+    const r = document.querySelector(`[data-r="${i}"]`).value.trim();
+    const o = document.querySelector(`[data-o="${i}"]`).value;
+    const s = document.querySelector(`[data-s="${i}"]`).value.trim();
+    if (!r || !o) { $('songsError').textContent = 'Bitte für jedes Lied Empfänger und Anlass ausfüllen.'; return; }
+    songs.push({recipient_name:r, occasion:o, story:s});
+  }
+  const btn = $('songsBtn'); btn.disabled = true; btn.textContent = 'Lieder werden angelegt…';
+  try {
+    const data = await api('/promo/voucher/songs', {method:'POST', body:JSON.stringify({songs})});
+    renderSongs(data);
+  } catch (e) { $('songsError').textContent = e.message; }
+  finally { btn.disabled = false; btn.textContent = 'Lieder starten'; }
+});
+function renderSongs(voucher) {
+  $('songResults').innerHTML = '';
+  voucher.songs.forEach(song => {
+    const url = location.origin + song.share_path;
+    const card = document.createElement('div');
+    card.className = 'song';
+    card.innerHTML = `<h3><span class="num">${song.position}</span> ${esc(song.recipient_name)} <span class="status ${esc(song.status)}">${esc(song.status_label)}</span></h3>
+      <p class="meta">${esc(song.occasion)}</p>
+      <div class="actions">
+        <button class="btn gold small" data-share="${esc(url)}" data-name="${esc(song.recipient_name)}">Weitergeben</button>
+        <button class="btn ghost small" data-copy="${esc(url)}">Link kopieren</button>
+      </div>`;
+    $('songResults').appendChild(card);
+  });
+  $('songResults').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
+  $('songResults').querySelectorAll('[data-share]').forEach(b => b.onclick = async () => {
+    const url = b.dataset.share;
+    const text = 'Ein persönliches Lied für ' + b.dataset.name + ' von Liederpost:';
+    if (navigator.share) { try { await navigator.share({title:'Dein Lied', text, url}); return; } catch(e) { if (e.name === 'AbortError') return; } }
+    copy(url);
+  });
+  show('done');
+}
+async function loadState() {
+  if (!state.claimToken) return boot();
+  try { const data = await api('/promo/voucher/state'); renderSongs(data); }
+  catch (e) { alert(e.message); }
+}
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); alert('Link kopiert'); }
+  catch (e) { prompt('Link kopieren:', text); }
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liederpost · Fast-Promotion</title>
+<style>
+  :root{--navy:#1C2B4A;--cream:#FBF6EC;--coral:#D9534F;--gold:#E8A33D;--salbei:#6F8F72;--line:#E5DCCB;--muted:#6B7280}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--navy);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+  .wrap{max-width:640px;margin:0 auto;padding:20px 16px 90px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .brand{font-weight:800;letter-spacing:.02em}.brand span{color:var(--coral)}
+  .who{font-size:12px;color:var(--muted);text-align:right}
+  h1{font-size:clamp(26px,7vw,38px);line-height:1.1;margin:8px 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 6px 20px rgba(28,43,74,.05)}
+  label{display:block;font-size:13px;font-weight:700;margin:12px 0 5px}
+  input,textarea,select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--navy);background:#fff;min-height:46px}
+  textarea{min-height:92px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:2px solid rgba(232,163,61,.45);border-color:var(--gold)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+  .seg{display:flex;gap:8px;margin:8px 0 4px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:150px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:12px;font:inherit;font-weight:700;color:var(--navy);cursor:pointer}
+  .seg button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .btn{border:0;border-radius:14px;padding:14px 16px;font:inherit;font-weight:800;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.primary{background:var(--coral);color:#fff;width:100%;margin-top:16px}
+  .btn.dark{background:var(--navy);color:#fff}
+  .btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .btn.small{padding:10px 12px;font-size:13px;min-height:42px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .hint{font-size:12px;color:var(--muted);margin:6px 0 0}
+  .error{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px}
+  .ok{color:var(--salbei);font-size:13px}
+  .voucher{border:1.5px dashed var(--gold);background:#FFFDF7;border-radius:16px;padding:14px;margin:10px 0}
+  .voucher .code{font-size:22px;font-weight:900;letter-spacing:.08em}
+  .voucher .meta{font-size:12.5px;color:var(--muted);margin:3px 0 10px}
+  .voucher .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .status{display:inline-block;font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px;background:#EEF2EA;color:#3F5C43;margin-left:6px;vertical-align:middle}
+  .status.claimed{background:#FFF2D9;color:#7A5510}.status.revoked{background:#FBE4E2;color:#8A2E2A}.status.completed{background:#E3F0E4;color:#315B37}
+  .listhead{display:flex;align-items:center;justify-content:space-between;margin:24px 0 4px}
+  .listhead h2{font-size:18px;margin:0}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+  .stat b{display:block;font-size:22px}.stat small{font-size:10.5px;color:var(--muted)}
+  .modal{position:fixed;inset:0;background:rgba(20,28,44,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+  .modal.open{display:flex}
+  .sheet{background:#fff;border-radius:20px;padding:18px;max-width:420px;width:100%;text-align:center}
+  #qrBox,#qrBoxLarge{display:flex;justify-content:center;margin:10px 0}
+  #qrBox svg,#qrBoxLarge svg{width:220px;height:220px;max-width:70vw;height:auto}
+  .login{max-width:420px;margin:8vh auto 0}
+  .login h1{font-size:34px}
+  footer{position:fixed;bottom:0;left:0;right:0;background:rgba(251,246,236,.96);border-top:1px solid var(--line);padding:8px 16px;text-align:center;font-size:11px;color:var(--muted)}
+  .hidden{display:none!important}
+  @media(max-width:420px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Lieder<span>post</span> · Fast-Promotion</div>
+    <div class="who" id="who"></div>
+  </header>
+
+  <section id="loginView" class="login hidden">
+    <h1>Kurz mal<br>verschenken.</h1>
+    <p class="sub">Martina oder Chris melden sich an, erstellen in Sekunden einen Gutschein-Link und geben ihn per WhatsApp, AirDrop oder QR weiter.</p>
+    <form id="loginForm" class="card">
+      <label for="username">Wer bist du?</label>
+      <select id="username">
+        <option value="martina">Martina</option>
+        <option value="chris">Chris</option>
+      </select>
+      <label for="password">Passwort</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button class="btn primary" type="submit">Anmelden</button>
+      <p class="error" id="loginError"></p>
+    </form>
+  </section>
+
+  <main id="appView" class="hidden">
+    <h1>Gutschein<br>in 30 Sekunden.</h1>
+    <p class="sub">Claim, Motivation, 3–6 Songs — Link und QR sind sofort fertig. Der Link ist persönlich und nur einmal einlösbar.</p>
+
+    <div class="stats" id="stats"></div>
+
+    <form id="createForm" class="card">
+      <label>Was soll entstehen?</label>
+      <div class="seg" id="modeSeg">
+        <button type="button" data-mode="credits" class="on">Ein Gutschein<br><small>3–6 Songs für Freunde</small></button>
+        <button type="button" data-mode="separate">3–6 Einzelgutscheine<br><small>je 1 Song</small></button>
+      </div>
+
+      <div class="row">
+        <div id="songsWrap">
+          <label for="songs">Songs auf dem Gutschein</label>
+          <select id="songs"><option>3</option><option>4</option><option>5</option><option>6</option></select>
+        </div>
+        <div id="countWrap" class="hidden">
+          <label for="count">Anzahl Einzelgutscheine</label>
+          <select id="count"><option>3</option><option>4</option><option>5</option><option>6</option></select>
+        </div>
+        <div>
+          <label for="days">Gültig (Tage)</label>
+          <select id="days"><option value="7">7</option><option value="30" selected>30</option><option value="60">60</option><option value="90">90</option></select>
+        </div>
+      </div>
+
+      <label for="claim">Claim / Überschrift</label>
+      <input id="claim" maxlength="180" placeholder="z. B. „Drei Lieder für deine Menschen“" required>
+      <label for="motivation">Motivation / kleiner Text</label>
+      <textarea id="motivation" maxlength="2000" placeholder="Warum lohnt es sich? Z. B. „Probier es aus und schenk es deinen Freunden weiter.“"></textarea>
+
+      <button class="btn primary" type="submit" id="createBtn">Gutschein erstellen</button>
+      <p class="error" id="createError"></p>
+      <p class="hint">Jeder Song braucht später Empfänger + Anlass. Der Interessent kann die Songs an Freunde personalisieren und den Link weitergeben.</p>
+    </form>
+
+    <div id="createdBox"></div>
+
+    <div class="listhead"><h2>Erstellte Gutscheine</h2><button class="btn ghost small" onclick="loadVouchers()">Aktualisieren</button></div>
+    <div id="voucherList"></div>
+  </main>
+</div>
+
+<div class="modal" id="qrModal" onclick="if(event.target===this)closeQr()">
+  <div class="sheet">
+    <h2 style="margin:0 0 4px">QR-Code</h2>
+    <p class="sub" id="qrCodeLabel" style="margin:0 0 8px"></p>
+    <div id="qrBoxLarge"></div>
+    <p class="hint">Mit der Handy-Kamera scannen oder Link kopieren.</p>
+    <button class="btn dark" style="width:100%;margin-top:12px" onclick="closeQr()">Schließen</button>
+  </div>
+</div>
+
+<footer>Nur für Martina &amp; Chris · Links sind einmalig · keine Passwörter im Chat</footer>
+
+<script src="assets/qr-code-styling.js"></script>
+<script>
+const API_BASE = window.LIEDERPOST_API_BASE ||
+  ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000/api' : '/api');
+const TOKEN_KEY = 'lp_promo_admin_token';
+let session = { token: sessionStorage.getItem(TOKEN_KEY) || '', user: null, mode: 'credits', vouchers: [], stats: {} };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function api(path, options = {}) {
+  const headers = Object.assign({}, options.headers || {});
+  if (session.token) headers['Authorization'] = 'Bearer ' + session.token;
+  if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, Object.assign({}, options, {headers}));
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (res.status === 401) { logout(false); throw new Error(data.detail || 'Bitte neu anmelden.'); }
+  if (!res.ok) {
+    let detail = data.detail;
+    if (Array.isArray(detail)) detail = detail.map(x => x.msg || '').join(' ');
+    throw new Error(detail || 'Etwas ist schiefgelaufen.');
+  }
+  return data;
+}
+
+function showLogin() {
+  $('loginView').classList.remove('hidden');
+  $('appView').classList.add('hidden');
+  $('who').textContent = '';
+}
+async function boot() {
+  if (!session.token) return showLogin();
+  try {
+    session.user = await api('/promo/admin/me');
+    $('who').textContent = session.user.name + ' · angemeldet';
+    $('loginView').classList.add('hidden');
+    $('appView').classList.remove('hidden');
+    await loadVouchers();
+  } catch (e) { showLogin(); }
+}
+function logout(clear = true) {
+  if (clear) session.token = '';
+  sessionStorage.removeItem(TOKEN_KEY);
+  session.user = null;
+  showLogin();
+}
+$('loginForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  $('loginError').textContent = '';
+  const username = $('username').value;
+  const password = $('password').value;
+  try {
+    const data = await api('/promo/admin/login', {
+      method: 'POST', body: JSON.stringify({username, password})
+    });
+    session.token = data.token;
+    sessionStorage.setItem(TOKEN_KEY, data.token);
+    session.user = data.user;
+    $('password').value = '';
+    await boot();
+  } catch (e) { $('loginError').textContent = e.message; }
+});
+
+$('modeSeg').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-mode]');
+  if (!btn) return;
+  session.mode = btn.dataset.mode;
+  [...$('modeSeg').querySelectorAll('button')].forEach(b => b.classList.toggle('on', b === btn));
+  $('songsWrap').classList.toggle('hidden', session.mode !== 'credits');
+  $('countWrap').classList.toggle('hidden', session.mode !== 'separate');
+});
+
+$('createForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  $('createError').textContent = '';
+  const btn = $('createBtn');
+  btn.disabled = true; btn.textContent = 'Wird erstellt…';
+  const payload = {
+    mode: session.mode,
+    songs: Number($('songs').value),
+    count: session.mode === 'separate' ? Number($('count').value) : 1,
+    claim: $('claim').value.trim(),
+    motivation: $('motivation').value.trim(),
+    expires_in_days: Number($('days').value)
+  };
+  try {
+    const data = await api('/promo/admin/vouchers', {method:'POST', body: JSON.stringify(payload)});
+    renderCreated(data.vouchers);
+    $('claim').value = ''; $('motivation').value = '';
+    await loadVouchers();
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch (e) { $('createError').textContent = e.message; }
+  finally { btn.disabled = false; btn.textContent = 'Gutschein erstellen'; }
+});
+
+function shareUrl(code) { return location.origin + '/promo.html?code=' + encodeURIComponent(code); }
+function renderCreated(vouchers) {
+  const box = $('createdBox');
+  box.innerHTML = '<div class="card"><h2 style="margin:0 0 4px">Fertig ✅</h2><p class="hint">Sofort kopieren, teilen oder QR zeigen. Jeder Link ist persönlich und einmalig.</p></div>';
+  vouchers.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'voucher';
+    card.innerHTML = `<div class="code">${esc(v.code)}</div>
+      <div class="meta">${v.total_songs} Song${v.total_songs === 1 ? '' : 's'} · gültig bis ${new Date(v.expires_at).toLocaleDateString('de-DE')}</div>
+      <div class="actions">
+        <button class="btn dark small" data-copy="${esc(shareUrl(v.code))}">Link kopieren</button>
+        <button class="btn gold small" data-share="${esc(v.code)}">Teilen</button>
+        <button class="btn ghost small" data-qr="${esc(v.code)}">QR zeigen</button>
+      </div>`;
+    box.appendChild(card);
+  });
+  box.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
+  box.querySelectorAll('[data-share]').forEach(b => b.onclick = () => share(b.dataset.share));
+  box.querySelectorAll('[data-qr]').forEach(b => b.onclick = () => showQr(b.dataset.qr));
+}
+
+async function loadVouchers() {
+  try {
+    const data = await api('/promo/admin/vouchers');
+    session.vouchers = data.vouchers || [];
+    session.stats = data.stats || {};
+    renderStats();
+    renderList();
+  } catch (e) {
+    if (session.token) $('createError').textContent = e.message;
+  }
+}
+function renderStats() {
+  const s = session.stats;
+  $('stats').innerHTML = `
+    <div class="stat"><b>${s.vouchers || 0}</b><small>Gutscheine</small></div>
+    <div class="stat"><b>${s.claimed || 0}</b><small>eingelöst</small></div>
+    <div class="stat"><b>${s.songs_used || 0}</b><small>Songs gestartet</small></div>
+    <div class="stat"><b>${s.songs_total || 0}</b><small>Songs gesamt</small></div>`;
+}
+function statusLabel(s) {
+  return {active:'offen', claimed:'eingelöst', completed:'komplett', revoked:'zurückgezogen', expired:'abgelaufen'}[s] || s;
+}
+function renderList() {
+  const box = $('voucherList');
+  if (!session.vouchers.length) { box.innerHTML = '<div class="card"><p class="hint">Noch keine Gutscheine. Oben den ersten erstellen.</p></div>'; return; }
+  box.innerHTML = '';
+  session.vouchers.slice(0, 50).forEach(v => {
+    const el = document.createElement('div');
+    el.className = 'voucher';
+    el.innerHTML = `<div class="code">${esc(v.code)} <span class="status ${esc(v.status)}">${esc(statusLabel(v.status))}</span></div>
+      <div class="meta">${v.total_songs} Song${v.total_songs === 1 ? '' : 's'} · ${esc(v.created_by)} · ${new Date(v.created_at).toLocaleString('de-DE')}${v.claimed_by_name ? ' · für ' + esc(v.claimed_by_name) : ''}</div>
+      <div class="actions">
+        <button class="btn dark small" data-copy="${esc(shareUrl(v.code))}">Link</button>
+        <button class="btn gold small" data-share="${esc(v.code)}">Teilen</button>
+        <button class="btn ghost small" data-qr="${esc(v.code)}">QR</button>
+        ${v.status === 'active' ? `<button class="btn ghost small" data-revoke="${esc(v.id)}">Zurückziehen</button>` : ''}
+      </div>`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
+  box.querySelectorAll('[data-share]').forEach(b => b.onclick = () => share(b.dataset.code || b.dataset.share));
+  box.querySelectorAll('[data-qr]').forEach(b => b.onclick = () => showQr(b.dataset.qr));
+  box.querySelectorAll('[data-revoke]').forEach(b => b.onclick = async () => {
+    if (!confirm('Diesen Gutschein wirklich zurückziehen?')) return;
+    try { await api('/promo/admin/vouchers/' + b.dataset.revoke + '/revoke', {method:'POST'}); await loadVouchers(); }
+    catch (e) { alert(e.message); }
+  });
+}
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); toast('Link kopiert'); }
+  catch (e) { prompt('Link kopieren:', text); }
+}
+async function share(code) {
+  const url = shareUrl(code);
+  const text = 'Dein Liederpost-Gutschein: ' + code + ' — einfach öffnen und Lieder für deine Menschen gestalten.';
+  if (navigator.share) {
+    try { await navigator.share({title:'Liederpost Gutschein', text, url}); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  copy(url);
+}
+let qrInstance = null;
+function showQr(code) {
+  const url = shareUrl(code);
+  $('qrCodeLabel').textContent = code + ' · ' + url;
+  const box = $('qrBoxLarge'); box.innerHTML = '';
+  qrInstance = new QRCodeStyling({width:260,height:260,type:'svg',data:url, margin:8,
+    dotsOptions:{color:'#1C2B4A',type:'rounded'}, cornersSquareOptions:{color:'#D9534F',type:'extra-rounded'}, backgroundOptions:{color:'#FBF6EC'}});
+  qrInstance.append(box);
+  $('qrModal').classList.add('open');
+}
+function closeQr() { $('qrModal').classList.remove('open'); }
+function toast(msg) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = 'position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:#1C2B4A;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;z-index:50';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1800);
+}
+boot();
+</script>
+</body>
+</html>

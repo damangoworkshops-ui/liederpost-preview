@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dein persönliches Lied · Liederpost</title>
+<style>
+  :root{--navy:#1C2B4A;--cream:#FBF6EC;--coral:#D9534F;--gold:#E8A33D;--line:#E5DCCB;--muted:#6B7280}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--navy);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+  .wrap{max-width:600px;margin:0 auto;padding:24px 16px 90px}
+  .brand{font-weight:800;font-size:14px;margin-bottom:30px}.brand span{color:var(--coral)}
+  .hero{background:linear-gradient(150deg,#1C2B4A,#2B4068);color:#fff;border-radius:22px;padding:24px;margin-bottom:16px}
+  .kicker{color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  h1{font-size:clamp(30px,8vw,44px);line-height:1.05;letter-spacing:-.03em;margin:10px 0 8px}
+  .sub{color:#D8DFEA;margin:0}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0}
+  .status{font-weight:800;font-size:18px;margin:0 0 6px}
+  .bar{height:9px;background:#EDE6D8;border-radius:999px;overflow:hidden;margin-top:14px}
+  .bar i{display:block;height:100%;width:15%;background:var(--gold);border-radius:999px;transition:width .5s}
+  .hint{color:var(--muted);font-size:13px}
+  .btn{display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:14px;background:var(--coral);color:#fff;text-decoration:none;font-weight:800;margin:10px 0;padding:14px}
+  .btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+  .download{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .download:last-child{border-bottom:0}
+  .download a{background:var(--navy);color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:700;white-space:nowrap}
+  footer{position:fixed;bottom:0;left:0;right:0;background:rgba(251,246,236,.96);border-top:1px solid var(--line);padding:9px 16px;text-align:center;font-size:11px;color:var(--muted)}
+  .hidden{display:none!important}
+  .error{color:var(--coral)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Lieder<span>post</span> · Ein Geschenk, das man hört</div>
+  <div id="loading" class="card"><p class="hint">Dein Lied wird geladen…</p></div>
+  <div id="errorBox" class="card hidden"><h1 style="font-size:26px">Link nicht gefunden.</h1><p class="error" id="errorText"></p></div>
+  <section id="content" class="hidden">
+    <div class="hero">
+      <div class="kicker">Ein persönliches Lied</div>
+      <h1 id="title">Für dich.</h1>
+      <p class="sub" id="occasion"></p>
+    </div>
+    <div class="card">
+      <p class="status" id="status"></p>
+      <p class="hint" id="stage"></p>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+    <div class="card" id="downloadsCard"></div>
+    <p class="hint" style="text-align:center;margin-top:18px">Gemacht mit Liebe · KI-unterstützt · Made with AI by Liederpost</p>
+  </section>
+</div>
+<footer>Liederpost · persönlich, KI-unterstützt, mit Liebe gemacht.</footer>
+
+<script>
+const API_BASE = window.LIEDERPOST_API_BASE ||
+  ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000/api' : '/api');
+const token = new URLSearchParams(location.search).get('token') || '';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LABELS = {pending_payment:'Zahlung offen', paid:'Bezahlt', queued:'In der Warteschlange', in_production:'Dein Lied entsteht', qa:'Letzter Schliff', ready:'Fertig 🎉', delivered:'Fertig 🎉'};
+const PROGRESS = {pending_payment:10, paid:15, queued:25, in_production:60, qa:85, ready:100, delivered:100};
+let timer = null;
+
+async function load() {
+  if (!token) return fail('Im Link fehlt der Bestell-Token.');
+  try {
+    const res = await fetch(API_BASE + '/orders/' + encodeURIComponent(token));
+    const order = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(order.detail || 'Dieser Link ist nicht gültig.');
+    render(order);
+  } catch (e) { fail(e.message); }
+}
+function fail(msg) {
+  $('errorText').textContent = msg;
+  $('loading').classList.add('hidden');
+  $('errorBox').classList.remove('hidden');
+}
+function render(order) {
+  $('loading').classList.add('hidden');
+  $('content').classList.remove('hidden');
+  document.title = 'Ein Lied für ' + (order.recipient_name || 'dich') + ' · Liederpost';
+  $('title').textContent = order.recipient_name ? 'Für ' + order.recipient_name : 'Für dich.';
+  $('occasion').textContent = order.occasion || 'Ein persönliches Geschenk';
+  $('status').textContent = LABELS[order.status] || order.status_label || order.status;
+  $('stage').textContent = order.status === 'ready' || order.status === 'delivered'
+    ? 'Du kannst dein Lied jetzt anhören und herunterladen.'
+    : 'Du musst nichts tun — diese Seite aktualisiert sich automatisch.';
+  $('bar').style.width = (PROGRESS[order.status] || 10) + '%';
+
+  const card = $('downloadsCard');
+  if ((order.status === 'ready' || order.status === 'delivered') && order.downloads && order.downloads.length) {
+    card.innerHTML = '<h2 style="font-size:20px;margin:0 0 8px">Deine Dateien</h2>' +
+      order.downloads.map(d => {
+        const url = d.url.startsWith('/api/') ? API_BASE.replace(/\/api$/, '') + d.url : d.url;
+        return `<div class="download"><span>${esc(d.filename)}<br><span class="hint">${(d.size_bytes/1024/1024).toFixed(1)} MB</span></span><a href="${esc(url)}">Herunterladen</a></div>`;
+      }).join('');
+  } else {
+    card.innerHTML = '<p class="hint" style="margin:0">Sobald dein Lied fertig ist, erscheinen hier die Download-Links.</p>';
+  }
+
+  clearTimeout(timer);
+  if (!(order.status === 'ready' || order.status === 'delivered')) {
+    timer = setTimeout(load, 15000);
+  }
+}
+load();
+</script>
+</body>
+</html>
